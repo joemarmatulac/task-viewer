@@ -1,0 +1,25 @@
+import type { Task, EnrichedTask } from '@/types/task'
+
+export function resolveBlockers(tasks: Task[]): EnrichedTask[] {
+  const byId = new Map(tasks.map((t) => [t.id, t]))
+
+  return tasks.map((task) => {
+    const blockedByTasks = task.blockedBy
+      .map((id) => byId.get(id))
+      .filter((t): t is Task => t !== undefined)
+
+    const blocksTasks = tasks.filter((other) =>
+      other.blockedBy.includes(task.id)
+    )
+
+    return { ...task, blockedByTasks, blocksTasks }
+  })
+}
+
+export function groupByStatus(tasks: EnrichedTask[]) {
+  return {
+    'Todo': tasks.filter((t) => t.status === 'Todo'),
+    'In Progress': tasks.filter((t) => t.status === 'In Progress'),
+    'Done': tasks.filter((t) => t.status === 'Done'),
+  }
+}
