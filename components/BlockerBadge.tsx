@@ -5,10 +5,10 @@ interface BlockerBadgeProps {
 }
 
 const DIRECTION_CONFIG = {
-  'blocked-by':     { label: 'Blocked by',    cls: 'bg-red-100 text-red-700' },
-  'blocks':         { label: 'Blocks',         cls: 'bg-amber-100 text-amber-700' },
-  'depends-on':     { label: 'Depends on',     cls: 'bg-purple-100 text-purple-700' },
-  'depended-on-by': { label: 'Depended on by', cls: 'bg-violet-100 text-violet-700' },
+  'blocked-by':     { label: 'Blocked by',    cls: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400' },
+  'blocks':         { label: 'Blocks',         cls: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400' },
+  'depends-on':     { label: 'Depends on',     cls: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400' },
+  'depended-on-by': { label: 'Depended on by', cls: 'bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-400' },
 }
 
 export function BlockerBadge({ direction, taskName, taskId }: BlockerBadgeProps) {

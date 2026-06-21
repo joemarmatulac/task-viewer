@@ -9,10 +9,10 @@ interface BlockedTasksReportProps {
 function StatusBadge({ status }: { status: string }) {
   const cls =
     status === 'Done'
-      ? 'bg-green-100 text-green-700'
+      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
       : status === 'In Progress'
-      ? 'bg-blue-100 text-blue-700'
-      : 'bg-gray-100 text-gray-600'
+      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400'
+      : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cls}`}>{status}</span>
   )
@@ -32,7 +32,7 @@ export function BlockedTasksReport({ tasks }: BlockedTasksReportProps) {
 
   if (blockedTasks.length === 0) {
     return (
-      <div className="text-sm text-gray-500 py-8 text-center">
+      <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
         No blocked tasks — everything is clear!
       </div>
     )
@@ -40,21 +40,21 @@ export function BlockedTasksReport({ tasks }: BlockedTasksReportProps) {
 
   function TaskRow({ task }: { task: EnrichedTask }) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs text-gray-400 font-mono">{task.id}</span>
-          <span className="text-sm font-medium text-gray-800">{task.name}</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">{task.id}</span>
+          <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{task.name}</span>
           <StatusBadge status={task.status} />
-          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full ml-auto">
+          <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full ml-auto">
             {task.assignee}
           </span>
         </div>
-        <div className="pl-2 border-l-2 border-gray-200 space-y-1">
-          <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Blocked by</p>
+        <div className="pl-2 border-l-2 border-gray-200 dark:border-gray-600 space-y-1">
+          <p className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wide">Blocked by</p>
           {task.blockedByTasks.map((b) => (
             <div key={b.id} className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 font-mono">{b.id}</span>
-              <span className="text-xs text-gray-700">{b.name}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">{b.id}</span>
+              <span className="text-xs text-gray-700 dark:text-gray-300">{b.name}</span>
               <StatusBadge status={b.status} />
             </div>
           ))}
@@ -67,7 +67,7 @@ export function BlockedTasksReport({ tasks }: BlockedTasksReportProps) {
     <div className="space-y-6">
       {truelyBlocked.length > 0 && (
         <section>
-          <h3 className="text-sm font-semibold text-red-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-red-700 dark:text-red-400 uppercase tracking-wide mb-3 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
             Blocked ({truelyBlocked.length})
           </h3>
@@ -81,7 +81,7 @@ export function BlockedTasksReport({ tasks }: BlockedTasksReportProps) {
 
       {waitingBlocked.length > 0 && (
         <section>
-          <h3 className="text-sm font-semibold text-yellow-700 uppercase tracking-wide mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-yellow-700 dark:text-yellow-400 uppercase tracking-wide mb-3 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
             Waiting — blockers done ({waitingBlocked.length})
           </h3>

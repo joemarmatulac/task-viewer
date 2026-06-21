@@ -31,7 +31,9 @@ export function FileUpload({ onFile, isLoading }: FileUploadProps) {
       }}
       onClick={() => inputRef.current?.click()}
       className={`cursor-pointer rounded-xl border-2 border-dashed p-10 text-center transition-colors ${
-        isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+        isDragging
+          ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-950/50'
+          : 'border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800/50 dark:hover:bg-gray-800'
       }`}
     >
       <input
@@ -42,11 +44,11 @@ export function FileUpload({ onFile, isLoading }: FileUploadProps) {
         onChange={(e) => handleFile(e.target.files?.[0])}
       />
       {isLoading ? (
-        <p className="text-sm text-gray-500">Parsing…</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Parsing…</p>
       ) : (
         <>
-          <p className="text-gray-600 font-medium">Drop your .xlsx file here</p>
-          <p className="text-sm text-gray-400 mt-1">or click to browse</p>
+          <p className="text-gray-600 dark:text-gray-300 font-medium">Drop your .xlsx file here</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">or click to browse</p>
         </>
       )}
     </div>

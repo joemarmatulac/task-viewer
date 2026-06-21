@@ -12,10 +12,10 @@ const WEEK_END = '2026-06-28'
 function StatusBadge({ status }: { status: string }) {
   const cls =
     status === 'Done'
-      ? 'bg-green-100 text-green-700'
+      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
       : status === 'In Progress'
-      ? 'bg-blue-100 text-blue-700'
-      : 'bg-gray-100 text-gray-600'
+      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400'
+      : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cls}`}>{status}</span>
   )
@@ -30,7 +30,7 @@ interface GroupSection {
 
 export function SprintReport({ tasks }: SprintReportProps) {
   if (tasks.length === 0) {
-    return <div className="text-sm text-gray-500 py-8 text-center">No tasks loaded.</div>
+    return <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">No tasks loaded.</div>
   }
 
   const overdue: EnrichedTask[] = []
@@ -58,25 +58,25 @@ export function SprintReport({ tasks }: SprintReportProps) {
     {
       label: 'Overdue',
       tasks: overdue,
-      labelClass: 'text-red-700',
+      labelClass: 'text-red-700 dark:text-red-400',
       dotClass: 'bg-red-400',
     },
     {
       label: 'Due this week',
       tasks: dueThisWeek,
-      labelClass: 'text-yellow-700',
+      labelClass: 'text-yellow-700 dark:text-yellow-400',
       dotClass: 'bg-yellow-400',
     },
     {
       label: 'Upcoming',
       tasks: upcoming,
-      labelClass: 'text-blue-700',
+      labelClass: 'text-blue-700 dark:text-blue-400',
       dotClass: 'bg-blue-400',
     },
     {
       label: 'Completed',
       tasks: completed,
-      labelClass: 'text-green-700',
+      labelClass: 'text-green-700 dark:text-green-400',
       dotClass: 'bg-green-400',
     },
   ]
@@ -93,14 +93,14 @@ export function SprintReport({ tasks }: SprintReportProps) {
               <span className={`w-2 h-2 rounded-full inline-block ${dotClass}`} />
               {label} ({groupTasks.length})
             </h3>
-            <div className="rounded-lg border border-gray-200 bg-white divide-y divide-gray-100">
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
               {groupTasks.map((task) => (
                 <div key={task.id} className="flex items-center gap-3 px-4 py-2.5 flex-wrap">
-                  <span className="text-xs text-gray-400 font-mono w-16 shrink-0">{task.id}</span>
-                  <span className="text-sm text-gray-700 flex-1 min-w-0">{task.name}</span>
-                  <span className="text-xs text-gray-500">{task.assignee}</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 font-mono w-16 shrink-0">{task.id}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 min-w-0">{task.name}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{task.assignee}</span>
                   {task.endDate && (
-                    <span className="text-xs text-gray-400 font-mono">{task.endDate}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">{task.endDate}</span>
                   )}
                   <StatusBadge status={task.status} />
                 </div>

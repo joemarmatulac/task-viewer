@@ -9,7 +9,7 @@ const ChartsView = dynamic(
   {
     ssr: false,
     loading: () => (
-      <p className="text-sm text-gray-400 text-center py-12">Loading charts…</p>
+      <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-12">Loading charts…</p>
     ),
   }
 )
@@ -39,15 +39,15 @@ export function ReportsView({ tasks }: ReportsViewProps) {
 
   return (
     <div className="space-y-4 min-w-0">
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
         {SUB_TABS.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
               activeTab === id
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
             }`}
           >
             {label}

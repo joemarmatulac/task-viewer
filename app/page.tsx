@@ -120,20 +120,20 @@ export default function Page() {
     <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{sheetName ?? 'Daily Standup Board'}</h1>
-          {fileName && <p className="text-sm text-gray-400 mt-0.5">Loaded: {fileName}</p>}
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{sheetName ?? 'Daily Standup Board'}</h1>
+          {fileName && <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Loaded: {fileName}</p>}
         </div>
 
         {(showBoard || showPicker) && (
           <div className="flex items-center gap-4">
             {sheetNames.length > 1 && (
               <div className="flex items-center gap-2">
-                <label className="text-xs font-medium text-gray-500">Sheet:</label>
+                <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Sheet:</label>
                 <select
                   value={sheetName ?? ''}
                   onChange={e => handleSheetSelect(e.target.value)}
                   disabled={isLoading}
-                  className="text-sm rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-700 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 disabled:opacity-50"
+                  className="text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-gray-700 dark:text-gray-200 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 disabled:opacity-50"
                 >
                   {!sheetName && <option value="">Select a sheet…</option>}
                   {sheetNames.map(n => (
@@ -154,7 +154,7 @@ export default function Page() {
 
             <button
               onClick={resetAll}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline"
             >
               Load different file
             </button>
@@ -163,37 +163,37 @@ export default function Page() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 text-red-700 p-4 text-sm">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 p-4 text-sm">
           {error}
         </div>
       )}
 
       {warnings.length > 0 && (
-        <div className="rounded-lg bg-amber-50 border border-amber-200 text-amber-800 p-4 text-sm space-y-1">
+        <div className="rounded-lg bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 p-4 text-sm space-y-1">
           <p className="font-medium">
             {warnings.length} row{warnings.length > 1 ? 's' : ''} skipped — missing required fields:
           </p>
-          <ul className="list-disc list-inside space-y-0.5 text-amber-700">
+          <ul className="list-disc list-inside space-y-0.5 text-amber-700 dark:text-amber-400">
             {warnings.map((w, i) => <li key={i}>{w}</li>)}
           </ul>
         </div>
       )}
 
       {isLoading && (
-        <div className="text-sm text-gray-400 text-center py-8">Loading…</div>
+        <div className="text-sm text-gray-400 dark:text-gray-500 text-center py-8">Loading…</div>
       )}
 
       {!isLoading && !showBoard && !showPicker && (
         <div className="space-y-8">
           <FileUpload onFile={handleFile} isLoading={isLoading} />
 
-          <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-5">
-            <h2 className="text-base font-semibold text-gray-800">How to use this app</h2>
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-5">
+            <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">How to use this app</h2>
 
-            <ol className="space-y-4 text-sm text-gray-600 list-decimal list-inside">
+            <ol className="space-y-4 text-sm text-gray-600 dark:text-gray-400 list-decimal list-inside">
               <li>
-                <span className="font-medium text-gray-800">Prepare your Excel file (.xlsx)</span>
-                <p className="mt-1 ml-5 text-gray-500">
+                <span className="font-medium text-gray-800 dark:text-gray-200">Prepare your Excel file (.xlsx)</span>
+                <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
                   The sheet you select must have the following column headers in row 1:
                 </p>
                 <div className="mt-2 ml-5 flex flex-wrap gap-1.5">
@@ -202,62 +202,62 @@ export default function Page() {
                       key={col}
                       className={`px-2 py-0.5 rounded text-xs font-mono ${
                         REQUIRED_FIELDS.includes(col)
-                          ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'
-                          : 'bg-gray-100 text-gray-600'
+                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 ring-1 ring-blue-200 dark:ring-blue-800'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
                       }`}
                     >
                       {col}{REQUIRED_FIELDS.includes(col) ? ' *' : ''}
                     </code>
                   ))}
                 </div>
-                <p className="mt-2 ml-5 text-xs text-gray-400">
+                <p className="mt-2 ml-5 text-xs text-gray-400 dark:text-gray-500">
                   * Required — rows missing these fields will be skipped with a warning.
                 </p>
               </li>
 
               <li>
-                <span className="font-medium text-gray-800">Upload the file</span>
-                <p className="mt-1 ml-5 text-gray-500">
-                  Drag and drop your <code className="bg-gray-100 px-1 rounded text-xs">.xlsx</code> file onto
+                <span className="font-medium text-gray-800 dark:text-gray-200">Upload the file</span>
+                <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
+                  Drag and drop your <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">.xlsx</code> file onto
                   the upload area above, or click it to browse. If the file has multiple sheets, you will be
                   asked to choose which one to load.
                 </p>
               </li>
 
               <li>
-                <span className="font-medium text-gray-800">Manage tasks on the Kanban board</span>
-                <p className="mt-1 ml-5 text-gray-500">
+                <span className="font-medium text-gray-800 dark:text-gray-200">Manage tasks on the Kanban board</span>
+                <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
                   Tasks are grouped into <strong>Todo</strong>, <strong>In Progress</strong>, <strong>On Hold</strong>, and <strong>Done</strong> columns.
                   Drag any card to a different column to update its status. Moving a card to <strong>In Progress</strong> automatically records today as the <strong>Actual Start Date</strong>; moving to <strong>Done</strong> records the <strong>Actual End Date</strong>. Only <strong>In Progress</strong> cards can be moved to <strong>On Hold</strong> — a reason prompt will appear. Use the filter bar to narrow by assignee, status, or date.
                 </p>
               </li>
 
               <li>
-                <span className="font-medium text-gray-800">Set blockers</span>
-                <p className="mt-1 ml-5 text-gray-500">
+                <span className="font-medium text-gray-800 dark:text-gray-200">Set blockers</span>
+                <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
                   Hover over any card and click <strong>Edit blockers</strong> to choose which tasks block it.
                   Blocker relationships are shown as badges on each card and included in the downloaded Excel.
                 </p>
               </li>
 
               <li>
-                <span className="font-medium text-gray-800">Download the updated file</span>
-                <p className="mt-1 ml-5 text-gray-500">
+                <span className="font-medium text-gray-800 dark:text-gray-200">Download the updated file</span>
+                <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
                   Click <strong>Download updated Excel</strong> in the top-right to export the current board
                   state. The file is saved with a version suffix (e.g.{' '}
-                  <code className="bg-gray-100 px-1 rounded text-xs">de-sprints_v1.0.xlsx</code>),
+                  <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">de-sprints_v1.0.xlsx</code>),
                   incrementing each download so previous versions are preserved.
                 </p>
               </li>
             </ol>
 
-            <div className="border-t border-gray-100 pt-4">
-              <p className="text-xs text-gray-400">
-                <strong className="text-gray-500">Valid Status values:</strong>{' '}
+            <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+              <p className="text-xs text-gray-400 dark:text-gray-500">
+                <strong className="text-gray-500 dark:text-gray-400">Valid Status values:</strong>{' '}
                 {['Todo', 'In Progress', 'On Hold', 'Done'].map(s => (
-                  <code key={s} className="bg-gray-100 px-1.5 py-0.5 rounded text-xs mr-1">{s}</code>
+                  <code key={s} className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-xs mr-1">{s}</code>
                 ))}
-                — any other value defaults to <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">Todo</code>.
+                — any other value defaults to <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-xs">Todo</code>.
               </p>
             </div>
           </div>
@@ -265,11 +265,11 @@ export default function Page() {
       )}
 
       {!isLoading && showPicker && (
-        <div className="rounded-xl border border-gray-200 bg-white p-8 space-y-5">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-8 space-y-5">
           <div>
-            <h2 className="text-base font-semibold text-gray-800">Choose a sheet to load</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              <span className="font-mono text-gray-700">{fileName}</span> has {sheetNames.length} sheets.
+            <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">Choose a sheet to load</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <span className="font-mono text-gray-700 dark:text-gray-300">{fileName}</span> has {sheetNames.length} sheets.
               Select the one that contains your task data.
             </p>
           </div>
@@ -278,7 +278,7 @@ export default function Page() {
               <button
                 key={name}
                 onClick={() => handleSheetSelect(name)}
-                className="px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors shadow-sm"
+                className="px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors shadow-sm"
               >
                 {name}
               </button>

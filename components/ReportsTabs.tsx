@@ -49,17 +49,19 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
     setEndDateFilter('')
   }
 
+  const inputCls = 'text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1.5 text-gray-700 dark:text-gray-200 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 disabled:opacity-50'
+
   return (
     <div className="space-y-4 min-w-0 overflow-hidden">
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
         {TOP_TABS.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
               activeTab === id
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
             }`}
           >
             {label}
@@ -68,13 +70,13 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
       </div>
 
       {/* Filter bar */}
-      <div className="flex flex-wrap items-end gap-3 rounded-lg bg-gray-50 border border-gray-200 px-4 py-3">
+      <div className="flex flex-wrap items-end gap-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-4 py-3">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Assignee</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Assignee</label>
           <select
             value={assigneeFilter}
             onChange={e => setAssigneeFilter(e.target.value)}
-            className="text-sm rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-700 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className={inputCls}
           >
             {assignees.map(a => (
               <option key={a} value={a}>{a}</option>
@@ -83,11 +85,11 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Status</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Status</label>
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value as 'All' | TaskStatus)}
-            className="text-sm rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-700 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className={inputCls}
           >
             <option value="All">All</option>
             <option value="Todo">Todo</option>
@@ -98,33 +100,33 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Target Start Date from</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Target Start Date from</label>
           <input
             type="date"
             value={startDateFilter}
             onChange={e => setStartDateFilter(e.target.value)}
-            className="text-sm rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-700 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className={inputCls}
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Target End Date until</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Target End Date until</label>
           <input
             type="date"
             value={endDateFilter}
             onChange={e => setEndDateFilter(e.target.value)}
-            className="text-sm rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-700 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className={inputCls}
           />
         </div>
 
         <div className="flex items-end gap-2 ml-auto">
-          <span className="text-xs text-gray-400 self-center">
+          <span className="text-xs text-gray-400 dark:text-gray-500 self-center">
             {filtered.length} of {tasks.length} tasks
           </span>
           {hasFilters && (
             <button
               onClick={clearFilters}
-              className="text-xs text-blue-600 hover:text-blue-800 underline self-center"
+              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline self-center"
             >
               Clear filters
             </button>

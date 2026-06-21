@@ -9,10 +9,10 @@ interface DependencyChainReportProps {
 function StatusBadge({ status }: { status: string }) {
   const cls =
     status === 'Done'
-      ? 'bg-green-100 text-green-700'
+      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
       : status === 'In Progress'
-      ? 'bg-blue-100 text-blue-700'
-      : 'bg-gray-100 text-gray-600'
+      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400'
+      : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cls}`}>{status}</span>
   )
@@ -30,8 +30,8 @@ function TreeNode({ task, taskMap, depth, visited }: TreeNodeProps) {
   if (visited.has(task.id)) {
     return (
       <div style={{ paddingLeft: depth * 20 }} className="flex items-center gap-2 py-1">
-        <span className="text-xs text-gray-400 font-mono">{task.id}</span>
-        <span className="text-xs text-gray-400 italic">(circular reference)</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">{task.id}</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500 italic">(circular reference)</span>
       </div>
     )
   }
@@ -50,12 +50,12 @@ function TreeNode({ task, taskMap, depth, visited }: TreeNodeProps) {
         className="flex items-center gap-2 py-1.5 flex-wrap"
       >
         {depth > 0 && (
-          <span className="text-gray-300 select-none">{'└'}</span>
+          <span className="text-gray-300 dark:text-gray-600 select-none">{'└'}</span>
         )}
-        <span className="text-xs text-gray-400 font-mono">{task.id}</span>
-        <span className="text-sm text-gray-700">{task.name}</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">{task.id}</span>
+        <span className="text-sm text-gray-700 dark:text-gray-300">{task.name}</span>
         <StatusBadge status={task.status} />
-        <span className="text-xs text-gray-400">{task.assignee}</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500">{task.assignee}</span>
       </div>
       {children.map((child) => (
         <TreeNode
@@ -72,7 +72,7 @@ function TreeNode({ task, taskMap, depth, visited }: TreeNodeProps) {
 
 export function DependencyChainReport({ tasks }: DependencyChainReportProps) {
   if (tasks.length === 0) {
-    return <div className="text-sm text-gray-500 py-8 text-center">No tasks loaded.</div>
+    return <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">No tasks loaded.</div>
   }
 
   const taskMap = new Map(tasks.map((t) => [t.id, t]))
@@ -90,7 +90,7 @@ export function DependencyChainReport({ tasks }: DependencyChainReportProps) {
 
   if (rootTasks.length === 0) {
     return (
-      <div className="text-sm text-gray-500 py-8 text-center">
+      <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
         No root tasks found — possible circular dependency in the entire task list.
       </div>
     )
@@ -105,7 +105,7 @@ export function DependencyChainReport({ tasks }: DependencyChainReportProps) {
   return (
     <div className="space-y-4">
       {chains.map((root) => (
-        <div key={root.id} className="rounded-lg border border-gray-200 bg-white p-4">
+        <div key={root.id} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
           <TreeNode
             task={root}
             taskMap={taskMap}
@@ -116,7 +116,7 @@ export function DependencyChainReport({ tasks }: DependencyChainReportProps) {
       ))}
 
       {chains.length === 0 && (
-        <div className="text-sm text-gray-500 py-8 text-center">
+        <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
           No dependency chains found.
         </div>
       )}
