@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FileUpload } from '@/components/FileUpload'
+import { HowToUse } from '@/components/HowToUse'
 import { ReportsTabs } from '@/components/ReportsTabs'
 import { parseExcelFile } from '@/lib/parseExcel'
 import { exportTasksToExcel } from '@/lib/exportExcel'
@@ -74,7 +75,10 @@ export default function Page() {
       )}
 
       {tasks.length === 0 ? (
-        <FileUpload onFile={handleFile} isLoading={isLoading} />
+        <>
+          <FileUpload onFile={handleFile} isLoading={isLoading} />
+          <HowToUse />
+        </>
       ) : (
         <ReportsTabs tasks={tasks} onStatusChange={handleStatusChange} />
       )}
