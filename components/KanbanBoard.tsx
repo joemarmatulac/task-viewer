@@ -1,9 +1,10 @@
-import type { EnrichedTask } from '@/types/task'
+import type { EnrichedTask, TaskStatus } from '@/types/task'
 import { groupByStatus } from '@/lib/taskUtils'
 import { KanbanColumn } from './KanbanColumn'
 
 interface KanbanBoardProps {
   tasks: EnrichedTask[]
+  onStatusChange: (id: string, status: TaskStatus) => void
 }
 
 const COLUMNS = [
@@ -12,7 +13,7 @@ const COLUMNS = [
   { status: 'Done' as const,        label: 'Done',        accent: 'border-green-400' },
 ]
 
-export function KanbanBoard({ tasks }: KanbanBoardProps) {
+export function KanbanBoard({ tasks, onStatusChange }: KanbanBoardProps) {
   const grouped = groupByStatus(tasks)
 
   return (
@@ -20,9 +21,11 @@ export function KanbanBoard({ tasks }: KanbanBoardProps) {
       {COLUMNS.map(({ status, label, accent }) => (
         <KanbanColumn
           key={status}
+          status={status}
           title={label}
           tasks={grouped[status]}
           accentClass={accent}
+          onStatusChange={onStatusChange}
         />
       ))}
     </div>

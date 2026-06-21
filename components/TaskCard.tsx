@@ -8,8 +8,17 @@ interface TaskCardProps {
 export function TaskCard({ task }: TaskCardProps) {
   const hasDeps = task.blockedByTasks.length > 0 || task.blocksTasks.length > 0
 
+  function handleDragStart(e: React.DragEvent) {
+    e.dataTransfer.setData('taskId', task.id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm space-y-2">
+    <div
+      draggable
+      onDragStart={handleDragStart}
+      className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm space-y-2 cursor-grab active:cursor-grabbing active:opacity-50 active:scale-95 transition-[opacity,transform]"
+    >
       <div className="flex items-start justify-between gap-2">
         <span className="text-xs text-gray-400 font-mono">{task.id}</span>
         <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">{task.assignee}</span>
