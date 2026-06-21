@@ -5,6 +5,7 @@ import { KanbanColumn } from './KanbanColumn'
 interface KanbanBoardProps {
   tasks: EnrichedTask[]
   onStatusChange: (id: string, status: TaskStatus) => void
+  onEditTask: (id: string) => void
 }
 
 const COLUMNS = [
@@ -13,7 +14,7 @@ const COLUMNS = [
   { status: 'Done' as const,        label: 'Done',        accent: 'border-green-400' },
 ]
 
-export function KanbanBoard({ tasks, onStatusChange }: KanbanBoardProps) {
+export function KanbanBoard({ tasks, onStatusChange, onEditTask }: KanbanBoardProps) {
   const grouped = groupByStatus(tasks)
 
   return (
@@ -26,6 +27,7 @@ export function KanbanBoard({ tasks, onStatusChange }: KanbanBoardProps) {
           tasks={grouped[status]}
           accentClass={accent}
           onStatusChange={onStatusChange}
+          onEditTask={onEditTask}
         />
       ))}
     </div>

@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Daily Standup Board
 
-## Getting Started
+A Next.js app that turns an Excel sprint sheet into an interactive Kanban board — with drag-and-drop status updates, filters, and versioned Excel export.
 
-First, run the development server:
+## Features
+
+- **Upload any `.xlsx` sprint file** — parsed client-side, nothing leaves the browser
+- **Kanban board** — tasks grouped into Todo / In Progress / Done columns
+- **Drag and drop** — move cards between columns to update status
+- **Filters** — narrow by assignee, start date, and end date
+- **Reports tab** — workload, sprint summary, blocked tasks, and dependency chain views
+- **Download updated Excel** — exports current board state with a `_v1.0`, `_v1.1` … version suffix
+
+## Excel format
+
+The first sheet must have these column headers in row 1:
+
+| Column | Required | Notes |
+|---|---|---|
+| Task ID | yes | Unique identifier, e.g. `T1` |
+| Task Name | yes | |
+| Assignee | no | |
+| **Status** | **yes** | `Todo`, `In Progress`, or `Done` |
+| **Start Date** | **yes** | `YYYY-MM-DD` or Excel date |
+| **End Date** | **yes** | `YYYY-MM-DD` or Excel date |
+| Blocked By | no | Comma-separated Task IDs, e.g. `T1,T3` |
+
+Rows missing **Status**, **Start Date**, or **End Date** are skipped and shown as warnings after upload.
+
+A sample file is available at [`public/sample-tasks.xlsx`](public/sample-tasks.xlsx).
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) and upload an `.xlsx` file to get started.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Running tests
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm test
+```

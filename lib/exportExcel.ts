@@ -3,13 +3,15 @@ import type { EnrichedTask } from '@/types/task'
 
 export function exportTasksToExcel(tasks: EnrichedTask[], originalName: string, version: string) {
   const rows = tasks.map(t => ({
-    'Task ID':    t.id,
-    'Task Name':  t.name,
-    'Assignee':   t.assignee,
-    'Status':     t.status,
-    'Start Date': t.startDate,
-    'End Date':   t.endDate,
-    'Blocked By': t.blockedBy.join(','),
+    'Task ID':          t.id,
+    'Task Name':        t.name,
+    'Task Description': t.description,
+    'Assignee':         t.assignee,
+    'Status':           t.status,
+    'Start Date':       t.startDate,
+    'End Date':         t.endDate,
+    'Blocked By':       t.blockedBy.join(','),
+    'Notes':            t.notes,
   }))
 
   const ws = XLSX.utils.json_to_sheet(rows)

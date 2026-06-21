@@ -10,9 +10,10 @@ interface KanbanColumnProps {
   tasks: EnrichedTask[]
   accentClass: string
   onStatusChange: (id: string, status: TaskStatus) => void
+  onEditTask: (id: string) => void
 }
 
-export function KanbanColumn({ title, status, tasks, accentClass, onStatusChange }: KanbanColumnProps) {
+export function KanbanColumn({ title, status, tasks, accentClass, onStatusChange, onEditTask }: KanbanColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false)
 
   function handleDragOver(e: React.DragEvent) {
@@ -46,7 +47,7 @@ export function KanbanColumn({ title, status, tasks, accentClass, onStatusChange
         }`}
       >
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard key={task.id} task={task} onEditTask={onEditTask} />
         ))}
         {tasks.length === 0 && (
           <p className={`text-xs text-center py-6 ${isDragOver ? 'text-blue-400' : 'text-gray-400'}`}>

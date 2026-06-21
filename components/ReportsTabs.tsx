@@ -8,6 +8,7 @@ import { ReportsView } from './reports/ReportsView'
 interface ReportsTabsProps {
   tasks: EnrichedTask[]
   onStatusChange: (id: string, status: TaskStatus) => void
+  onEditTask: (id: string) => void
 }
 
 type TopTab = 'kanban' | 'reports'
@@ -17,7 +18,7 @@ const TOP_TABS: { id: TopTab; label: string }[] = [
   { id: 'reports', label: 'Reports' },
 ]
 
-export function ReportsTabs({ tasks, onStatusChange }: ReportsTabsProps) {
+export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsProps) {
   const [activeTab, setActiveTab] = useState<TopTab>('kanban')
   const [assigneeFilter, setAssigneeFilter] = useState('All')
   const [startDateFilter, setStartDateFilter] = useState('')
@@ -113,7 +114,7 @@ export function ReportsTabs({ tasks, onStatusChange }: ReportsTabsProps) {
         </div>
       </div>
 
-      {activeTab === 'kanban' && <KanbanBoard tasks={filtered} onStatusChange={onStatusChange} />}
+      {activeTab === 'kanban' && <KanbanBoard tasks={filtered} onStatusChange={onStatusChange} onEditTask={onEditTask} />}
       {activeTab === 'reports' && <ReportsView tasks={filtered} />}
     </div>
   )
