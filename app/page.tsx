@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { FileUpload } from '@/components/FileUpload'
 import { ReportsTabs } from '@/components/ReportsTabs'
 import { TaskEditModal } from '@/components/TaskEditModal'
-import { parseExcelFile } from '@/lib/parseExcel'
+import { parseExcelFile, getSheetNames } from '@/lib/parseExcel'
 import { exportTasksToExcel } from '@/lib/exportExcel'
 import { resolveBlockers } from '@/lib/taskUtils'
 import type { EnrichedTask, TaskStatus } from '@/types/task'
@@ -18,6 +18,8 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
   const [sheetName, setSheetName] = useState<string | null>(null)
+  const [sheetNames, setSheetNames] = useState<string[]>([])
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [dlMinor, setDlMinor] = useState(0)
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
@@ -29,12 +31,8 @@ export default function Page() {
     setTasks(prev => prev.map(t => {
       if (t.id !== id) return t
       const updates: Partial<typeof t> = { status }
-      if (status === 'In Progress' && !t.actualStartDate) {
-        updates.actualStartDate = today
-      }
-      if (status === 'Done' && !t.actualEndDate) {
-        updates.actualEndDate = today
-      }
+      if (status === 'In Progress' && !t.actualStartDate) updates.actualStartDate = today
+      if (status === 'Done' && !t.actualEndDate) updates.actualEndDate = today
       if (status === 'On Hold') {
         updates.onHoldDate = today
         updates.onHoldReason = meta?.onHoldReason ?? ''
@@ -57,24 +55,66 @@ export default function Page() {
     setDlMinor(v => v + 1)
   }
 
-  async function handleFile(file: File) {
+  function resetAll() {
+    setTasks([])
+    setFileName(null)
+    setSheetName(null)
+    setSheetNames([])
+    setPendingFile(null)
+    setWarnings([])
+    setError(null)
+  }
+
+  async function handleSheetSelect(name: string) {
+    if (!pendingFile) return
     setIsLoading(true)
     setError(null)
     setWarnings([])
     try {
-      const { tasks: parsed, warnings: warn, sheetName: sheet } = await parseExcelFile(file)
+      const { tasks: parsed, warnings: warn, sheetName: resolved } = await parseExcelFile(pendingFile, name)
       setTasks(resolveBlockers(parsed))
       setWarnings(warn)
-      setFileName(file.name)
-      setSheetName(sheet ?? null)
+      setSheetName(resolved ?? null)
       setDlMinor(0)
     } catch (e) {
-      setError('Failed to parse the Excel file. Check the column names match the expected format.')
+      setError('Failed to parse the sheet. Check the column names match the expected format.')
       console.error(e)
     } finally {
       setIsLoading(false)
     }
   }
+
+  async function handleFile(file: File) {
+    setIsLoading(true)
+    setError(null)
+    setWarnings([])
+    setTasks([])
+    setSheetName(null)
+    setSheetNames([])
+    setPendingFile(null)
+    setFileName(file.name)
+    try {
+      const names = await getSheetNames(file)
+      setSheetNames(names)
+      setPendingFile(file)
+      setDlMinor(0)
+      if (names.length === 1) {
+        const { tasks: parsed, warnings: warn, sheetName: resolved } = await parseExcelFile(file, names[0])
+        setTasks(resolveBlockers(parsed))
+        setWarnings(warn)
+        setSheetName(resolved ?? null)
+      }
+      // multiple sheets: stop here, show picker
+    } catch (e) {
+      setError('Failed to read the Excel file. Check it is a valid .xlsx file.')
+      console.error(e)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const showPicker = pendingFile !== null && sheetNames.length > 1 && tasks.length === 0 && !isLoading
+  const showBoard  = tasks.length > 0
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
@@ -83,16 +123,37 @@ export default function Page() {
           <h1 className="text-2xl font-bold text-gray-900">{sheetName ?? 'Daily Standup Board'}</h1>
           {fileName && <p className="text-sm text-gray-400 mt-0.5">Loaded: {fileName}</p>}
         </div>
-        {tasks.length > 0 && (
+
+        {(showBoard || showPicker) && (
           <div className="flex items-center gap-4">
+            {sheetNames.length > 1 && (
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-medium text-gray-500">Sheet:</label>
+                <select
+                  value={sheetName ?? ''}
+                  onChange={e => handleSheetSelect(e.target.value)}
+                  disabled={isLoading}
+                  className="text-sm rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-700 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 disabled:opacity-50"
+                >
+                  {!sheetName && <option value="">Select a sheet…</option>}
+                  {sheetNames.map(n => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {showBoard && (
+              <button
+                onClick={handleDownload}
+                className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md transition-colors"
+              >
+                Download updated Excel
+              </button>
+            )}
+
             <button
-              onClick={handleDownload}
-              className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md transition-colors"
-            >
-              Download updated Excel
-            </button>
-            <button
-              onClick={() => { setTasks([]); setFileName(null); setSheetName(null); setWarnings([]) }}
+              onClick={resetAll}
               className="text-sm text-gray-500 hover:text-gray-700 underline"
             >
               Load different file
@@ -118,7 +179,11 @@ export default function Page() {
         </div>
       )}
 
-      {tasks.length === 0 ? (
+      {isLoading && (
+        <div className="text-sm text-gray-400 text-center py-8">Loading…</div>
+      )}
+
+      {!isLoading && !showBoard && !showPicker && (
         <div className="space-y-8">
           <FileUpload onFile={handleFile} isLoading={isLoading} />
 
@@ -129,7 +194,7 @@ export default function Page() {
               <li>
                 <span className="font-medium text-gray-800">Prepare your Excel file (.xlsx)</span>
                 <p className="mt-1 ml-5 text-gray-500">
-                  The first sheet must have the following column headers in row 1:
+                  The sheet you select must have the following column headers in row 1:
                 </p>
                 <div className="mt-2 ml-5 flex flex-wrap gap-1.5">
                   {REQUIRED_COLUMNS.map(col => (
@@ -154,7 +219,8 @@ export default function Page() {
                 <span className="font-medium text-gray-800">Upload the file</span>
                 <p className="mt-1 ml-5 text-gray-500">
                   Drag and drop your <code className="bg-gray-100 px-1 rounded text-xs">.xlsx</code> file onto
-                  the upload area above, or click it to browse.
+                  the upload area above, or click it to browse. If the file has multiple sheets, you will be
+                  asked to choose which one to load.
                 </p>
               </li>
 
@@ -196,7 +262,32 @@ export default function Page() {
             </div>
           </div>
         </div>
-      ) : (
+      )}
+
+      {!isLoading && showPicker && (
+        <div className="rounded-xl border border-gray-200 bg-white p-8 space-y-5">
+          <div>
+            <h2 className="text-base font-semibold text-gray-800">Choose a sheet to load</h2>
+            <p className="text-sm text-gray-500 mt-1">
+              <span className="font-mono text-gray-700">{fileName}</span> has {sheetNames.length} sheets.
+              Select the one that contains your task data.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {sheetNames.map(name => (
+              <button
+                key={name}
+                onClick={() => handleSheetSelect(name)}
+                className="px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors shadow-sm"
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!isLoading && showBoard && (
         <ReportsTabs
           tasks={tasks}
           onStatusChange={handleStatusChange}

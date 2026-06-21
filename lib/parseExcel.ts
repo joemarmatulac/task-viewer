@@ -103,12 +103,18 @@ export function parseRows(rows: RawRow[]): ParseResult {
   return { tasks, warnings }
 }
 
-export async function parseExcelFile(file: File): Promise<ParseResult> {
+export async function getSheetNames(file: File): Promise<string[]> {
   const buffer = await file.arrayBuffer()
   const workbook = XLSX.read(buffer, { type: 'array', cellDates: false })
-  const sheetName = workbook.SheetNames[0]
-  const sheet = workbook.Sheets[sheetName]
+  return workbook.SheetNames
+}
+
+export async function parseExcelFile(file: File, sheetName?: string): Promise<ParseResult> {
+  const buffer = await file.arrayBuffer()
+  const workbook = XLSX.read(buffer, { type: 'array', cellDates: false })
+  const resolvedSheet = sheetName ?? workbook.SheetNames[0]
+  const sheet = workbook.Sheets[resolvedSheet]
   const rows = XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: '' })
   const result = parseRows(rows)
-  return { ...result, sheetName }
+  return { ...result, sheetName: resolvedSheet }
 }
