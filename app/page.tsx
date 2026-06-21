@@ -9,8 +9,8 @@ import { exportTasksToExcel } from '@/lib/exportExcel'
 import { resolveBlockers } from '@/lib/taskUtils'
 import type { EnrichedTask, TaskStatus } from '@/types/task'
 
-const REQUIRED_COLUMNS = ['Task ID', 'Task Name', 'Task Description', 'Assignee', 'Status', 'Start Date', 'End Date', 'Actual Start Date', 'Actual End Date', 'On Hold Date', 'On Hold Reason', 'Blocked By', 'Notes']
-const REQUIRED_FIELDS  = ['Task ID', 'Task Name', 'Status', 'Start Date', 'End Date']
+const REQUIRED_COLUMNS = ['Task ID', 'Task Name', 'Task Description', 'Assignee', 'Status', 'Target Start Date', 'Target End Date', 'Actual Start Date', 'Actual End Date', 'On Hold Date', 'On Hold Reason', 'Blocked By', 'Notes']
+const REQUIRED_FIELDS  = ['Task ID', 'Task Name', 'Status', 'Target Start Date', 'Target End Date']
 
 export default function Page() {
   const [tasks, setTasks] = useState<EnrichedTask[]>([])

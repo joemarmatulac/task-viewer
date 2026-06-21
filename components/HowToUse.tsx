@@ -38,8 +38,8 @@ export function HowToUse() {
                     ['Task Name', 'Yes', 'Build login page', 'Short description of the task'],
                     ['Assignee', 'No', 'Alice', 'Person responsible'],
                     ['Status', 'No', 'In Progress', 'Todo · In Progress · Done (defaults to Todo)'],
-                    ['Start Date', 'No', '2026-06-01', 'YYYY-MM-DD or Excel date cell'],
-                    ['End Date', 'No', '2026-06-15', 'YYYY-MM-DD or Excel date cell'],
+                    ['Target Start Date', 'No', '2026-06-01', 'YYYY-MM-DD or Excel date cell'],
+                    ['Target End Date', 'No', '2026-06-15', 'YYYY-MM-DD or Excel date cell'],
                     ['Blocked By', 'No', 'T1,T3', 'Comma-separated Task IDs this task depends on'],
                   ].map(([col, req, ex, note]) => (
                     <tr key={col} className="even:bg-gray-50">

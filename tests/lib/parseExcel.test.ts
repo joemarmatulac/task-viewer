@@ -9,8 +9,8 @@ describe('parseRows', () => {
       'Project': 'Alpha',
       'Assignee': 'Alice',
       'Status': 'Done',
-      'Start Date': '2026-06-01',
-      'End Date': '2026-06-05',
+      'Target Start Date': '2026-06-01',
+      'Target End Date': '2026-06-05',
       'Blocked By': '',
     },
     {
@@ -19,8 +19,8 @@ describe('parseRows', () => {
       'Project': 'Alpha',
       'Assignee': 'Bob',
       'Status': 'In Progress',
-      'Start Date': '2026-06-06',
-      'End Date': '2026-06-15',
+      'Target Start Date': '2026-06-06',
+      'Target End Date': '2026-06-15',
       'Blocked By': 'T1',
     },
     {
@@ -29,8 +29,8 @@ describe('parseRows', () => {
       'Project': 'Beta',
       'Assignee': 'Carol',
       'Status': 'Todo',
-      'Start Date': '2026-06-10',
-      'End Date': '2026-06-20',
+      'Target Start Date': '2026-06-10',
+      'Target End Date': '2026-06-20',
       'Blocked By': 'T1,T2',
     },
   ]
@@ -68,8 +68,8 @@ describe('parseRows', () => {
 
   it('skips rows with missing Task ID or Task Name and adds warnings', () => {
     const rows = [
-      { 'Task ID': '', 'Task Name': 'Orphan', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Todo', 'Start Date': '2026-06-01', 'End Date': '2026-06-05', 'Blocked By': '' },
-      { 'Task ID': 'T4', 'Task Name': '', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Todo', 'Start Date': '2026-06-01', 'End Date': '2026-06-05', 'Blocked By': '' },
+      { 'Task ID': '', 'Task Name': 'Orphan', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Todo', 'Target Start Date': '2026-06-01', 'Target End Date': '2026-06-05', 'Blocked By': '' },
+      { 'Task ID': 'T4', 'Task Name': '', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Todo', 'Target Start Date': '2026-06-01', 'Target End Date': '2026-06-05', 'Blocked By': '' },
     ]
     const { tasks, warnings } = parseRows(rows)
     expect(tasks).toHaveLength(0)
@@ -80,26 +80,26 @@ describe('parseRows', () => {
 
   it('skips rows missing required fields and adds a warning', () => {
     const rows = [
-      { 'Task ID': 'T5', 'Task Name': 'Missing dates', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Todo', 'Start Date': '', 'End Date': '', 'Blocked By': '' },
-      { 'Task ID': 'T6', 'Task Name': 'Missing status', 'Project': 'Alpha', 'Assignee': 'X', 'Status': '', 'Start Date': '2026-06-01', 'End Date': '2026-06-05', 'Blocked By': '' },
+      { 'Task ID': 'T5', 'Task Name': 'Missing dates', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Todo', 'Target Start Date': '', 'Target End Date': '', 'Blocked By': '' },
+      { 'Task ID': 'T6', 'Task Name': 'Missing status', 'Project': 'Alpha', 'Assignee': 'X', 'Status': '', 'Target Start Date': '2026-06-01', 'Target End Date': '2026-06-05', 'Blocked By': '' },
     ]
     const { tasks, warnings } = parseRows(rows)
     expect(tasks).toHaveLength(0)
     expect(warnings).toHaveLength(2)
-    expect(warnings[0]).toContain('Start Date')
-    expect(warnings[0]).toContain('End Date')
+    expect(warnings[0]).toContain('Target Start Date')
+    expect(warnings[0]).toContain('Target End Date')
     expect(warnings[1]).toContain('Status')
   })
 
   it('skips rows missing Project and adds a warning', () => {
-    const rows = [{ 'Task ID': 'T7', 'Task Name': 'No project', 'Project': '', 'Assignee': 'X', 'Status': 'Todo', 'Start Date': '2026-06-01', 'End Date': '2026-06-10', 'Blocked By': '' }]
+    const rows = [{ 'Task ID': 'T7', 'Task Name': 'No project', 'Project': '', 'Assignee': 'X', 'Status': 'Todo', 'Target Start Date': '2026-06-01', 'Target End Date': '2026-06-10', 'Blocked By': '' }]
     const { tasks, warnings } = parseRows(rows)
     expect(tasks).toHaveLength(0)
     expect(warnings[0]).toContain('Project')
   })
 
   it('normalises unknown status to Todo', () => {
-    const rows = [{ 'Task ID': 'T5', 'Task Name': 'X', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Backlog', 'Start Date': '2026-06-01', 'End Date': '2026-06-10', 'Blocked By': '' }]
+    const rows = [{ 'Task ID': 'T5', 'Task Name': 'X', 'Project': 'Alpha', 'Assignee': 'X', 'Status': 'Backlog', 'Target Start Date': '2026-06-01', 'Target End Date': '2026-06-10', 'Blocked By': '' }]
     const { tasks: [task] } = parseRows(rows)
     expect(task.status).toBe('Todo')
   })

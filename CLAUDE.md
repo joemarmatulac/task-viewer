@@ -29,11 +29,11 @@ First sheet, row 1 must contain these headers exactly:
 | Project | **yes** |
 | Assignee | no |
 | Status | **yes** |
-| Start Date | **yes** |
-| End Date | **yes** |
+| Target Start Date | **yes** |
+| Target End Date | **yes** |
 | Blocked By | no |
 
-Rows missing **Status**, **Start Date**, or **End Date** are skipped and surfaced as amber warnings.
+Rows missing **Status**, **Target Start Date**, or **Target End Date** are skipped and surfaced as amber warnings.
 
 Valid `Status` values: `Todo`, `In Progress`, `Done`. Anything else defaults to `Todo`.
 

@@ -59,13 +59,13 @@ export function parseRows(rows: RawRow[]): ParseResult {
     const rawStatus = toStr(row['Status']) as TaskStatus
     if (!rawStatus) missing.push('Status')
 
-    const startDateRaw = row['Start Date']
+    const startDateRaw = row['Target Start Date']
     const startDate = parseDate(startDateRaw)
-    if (!startDate) missing.push('Start Date')
+    if (!startDate) missing.push('Target Start Date')
 
-    const endDateRaw = row['End Date']
+    const endDateRaw = row['Target End Date']
     const endDate = parseDate(endDateRaw)
-    if (!endDate) missing.push('End Date')
+    if (!endDate) missing.push('Target End Date')
 
     if (missing.length > 0) {
       const label = id ? `${id} – "${name}"` : `"${name || '?'}"`

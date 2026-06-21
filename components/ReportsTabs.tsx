@@ -98,7 +98,7 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">Start Date from</label>
+          <label className="text-xs font-medium text-gray-500">Target Start Date from</label>
           <input
             type="date"
             value={startDateFilter}
@@ -108,7 +108,7 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">End Date until</label>
+          <label className="text-xs font-medium text-gray-500">Target End Date until</label>
           <input
             type="date"
             value={endDateFilter}
