@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { FileUpload } from '@/components/FileUpload'
-import { KanbanBoard } from '@/components/KanbanBoard'
+import { ReportsTabs } from '@/components/ReportsTabs'
 import { parseExcelFile } from '@/lib/parseExcel'
 import { resolveBlockers } from '@/lib/taskUtils'
 import type { EnrichedTask } from '@/types/task'
@@ -54,7 +54,7 @@ export default function Page() {
       {tasks.length === 0 ? (
         <FileUpload onFile={handleFile} isLoading={isLoading} />
       ) : (
-        <KanbanBoard tasks={tasks} />
+        <ReportsTabs tasks={tasks} />
       )}
     </main>
   )
