@@ -12,7 +12,15 @@ export function resolveBlockers(tasks: Task[]): EnrichedTask[] {
       other.blockedBy.includes(task.id)
     )
 
-    return { ...task, blockedByTasks, blocksTasks }
+    const dependsOnTasks = task.dependsOn
+      .map((id) => byId.get(id))
+      .filter((t): t is Task => t !== undefined)
+
+    const dependedOnByTasks = tasks.filter((other) =>
+      other.dependsOn.includes(task.id)
+    )
+
+    return { ...task, blockedByTasks, blocksTasks, dependsOnTasks, dependedOnByTasks }
   })
 }
 

@@ -27,9 +27,12 @@ const baseTask: EnrichedTask = {
   startDate: '2026-06-06',
   endDate: '2026-06-15',
   blockedBy: ['T1'],
+  dependsOn: [],
   notes: '',
-  blockedByTasks: [{ id: 'T1', name: 'Design mockups', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], notes: '' }],
-  blocksTasks: [{ id: 'T3', name: 'Write tests', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], notes: '' }],
+  blockedByTasks: [{ id: 'T1', name: 'Design mockups', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' }],
+  blocksTasks: [{ id: 'T3', name: 'Write tests', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' }],
+  dependsOnTasks: [],
+  dependedOnByTasks: [],
 }
 
 describe('TaskCard', () => {

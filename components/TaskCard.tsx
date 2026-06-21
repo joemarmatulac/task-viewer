@@ -43,6 +43,14 @@ export function TaskCard({ task, onEditTask }: TaskCardProps) {
         </div>
       )}
 
+      {task.dependsOnTasks.length > 0 && (
+        <div className="flex flex-wrap gap-1 pt-1">
+          {task.dependsOnTasks.map((t) => (
+            <BlockerBadge key={t.id} direction="depends-on" taskName={t.name} taskId={t.id} />
+          ))}
+        </div>
+      )}
+
       {task.notes && (
         <p className="text-xs text-gray-400 italic leading-relaxed line-clamp-2 border-t border-gray-100 pt-2">
           {task.notes}
@@ -53,7 +61,7 @@ export function TaskCard({ task, onEditTask }: TaskCardProps) {
         onClick={e => { e.stopPropagation(); onEditTask(task.id) }}
         className="hidden group-hover:block text-xs text-blue-500 hover:text-blue-700 pt-0.5"
       >
-        Edit blockers
+        Edit blockers & dependencies
       </button>
     </div>
   )

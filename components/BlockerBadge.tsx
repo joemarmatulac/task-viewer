@@ -1,21 +1,24 @@
 interface BlockerBadgeProps {
-  direction: 'blocked-by' | 'blocks'
+  direction: 'blocked-by' | 'blocks' | 'depends-on' | 'depended-on-by'
   taskName: string
   taskId: string
 }
 
+const DIRECTION_CONFIG = {
+  'blocked-by':     { label: 'Blocked by',    cls: 'bg-red-100 text-red-700' },
+  'blocks':         { label: 'Blocks',         cls: 'bg-amber-100 text-amber-700' },
+  'depends-on':     { label: 'Depends on',     cls: 'bg-purple-100 text-purple-700' },
+  'depended-on-by': { label: 'Depended on by', cls: 'bg-violet-100 text-violet-700' },
+}
+
 export function BlockerBadge({ direction, taskName, taskId }: BlockerBadgeProps) {
-  const isBlockedBy = direction === 'blocked-by'
+  const { label, cls } = DIRECTION_CONFIG[direction]
   return (
     <span
-      title={`${isBlockedBy ? 'Blocked by' : 'Blocks'} ${taskId}`}
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-        isBlockedBy
-          ? 'bg-red-100 text-red-700'
-          : 'bg-amber-100 text-amber-700'
-      }`}
+      title={`${label} ${taskId}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}
     >
-      <span>{isBlockedBy ? 'Blocked by' : 'Blocks'}</span>
+      <span>{label}</span>
       <span className="font-semibold">{taskName}</span>
     </span>
   )

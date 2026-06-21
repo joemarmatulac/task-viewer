@@ -11,6 +11,7 @@ export function exportTasksToExcel(tasks: EnrichedTask[], originalName: string, 
     'Start Date':       t.startDate,
     'End Date':         t.endDate,
     'Blocked By':       t.blockedBy.join(','),
+    'Dependency':       t.dependsOn.join(','),
     'Notes':            t.notes,
   }))
 

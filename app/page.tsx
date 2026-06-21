@@ -27,10 +27,10 @@ export default function Page() {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, status } : t))
   }
 
-  function handleBlockerSave(blockedBy: string[]) {
+  function handleBlockerSave(blockedBy: string[], dependsOn: string[]) {
     if (!editingTaskId) return
     setTasks(prev => resolveBlockers(prev.map(t =>
-      t.id === editingTaskId ? { ...t, blockedBy } : t
+      t.id === editingTaskId ? { ...t, blockedBy, dependsOn } : t
     )))
     setEditingTaskId(null)
   }

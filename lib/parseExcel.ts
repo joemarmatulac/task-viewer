@@ -63,6 +63,11 @@ export function parseRows(rows: RawRow[]): ParseResult {
       ? blockedByRaw.split(',').map((s) => s.trim()).filter(Boolean)
       : []
 
+    const dependsOnRaw = toStr(row['Dependency'])
+    const dependsOn = dependsOnRaw
+      ? dependsOnRaw.split(',').map((s) => s.trim()).filter(Boolean)
+      : []
+
     tasks.push({
       id,
       name,
@@ -72,6 +77,7 @@ export function parseRows(rows: RawRow[]): ParseResult {
       startDate,
       endDate,
       blockedBy,
+      dependsOn,
       notes: toStr(row['Notes']),
     })
   })

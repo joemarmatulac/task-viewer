@@ -1,12 +1,12 @@
 import * as XLSX from 'xlsx'
 
 const rows = [
-  { 'Task ID': 'T1', 'Task Name': 'Define requirements', 'Assignee': 'Alice', 'Status': 'Done',        'Start Date': '2026-06-01', 'End Date': '2026-06-03', 'Blocked By': '' },
-  { 'Task ID': 'T2', 'Task Name': 'Design mockups',       'Assignee': 'Bob',   'Status': 'Done',        'Start Date': '2026-06-04', 'End Date': '2026-06-07', 'Blocked By': 'T1' },
-  { 'Task ID': 'T3', 'Task Name': 'Build frontend',       'Assignee': 'Carol', 'Status': 'In Progress', 'Start Date': '2026-06-08', 'End Date': '2026-06-18', 'Blocked By': 'T2' },
-  { 'Task ID': 'T4', 'Task Name': 'Build backend API',    'Assignee': 'Dave',  'Status': 'In Progress', 'Start Date': '2026-06-08', 'End Date': '2026-06-20', 'Blocked By': 'T1' },
-  { 'Task ID': 'T5', 'Task Name': 'Write unit tests',     'Assignee': 'Eve',   'Status': 'Todo',        'Start Date': '2026-06-15', 'End Date': '2026-06-22', 'Blocked By': 'T3,T4' },
-  { 'Task ID': 'T6', 'Task Name': 'Deploy to staging',    'Assignee': 'Alice', 'Status': 'Todo',        'Start Date': '2026-06-23', 'End Date': '2026-06-24', 'Blocked By': 'T5' },
+  { 'Task ID': 'T1', 'Task Name': 'Define requirements', 'Assignee': 'Alice', 'Status': 'Done',        'Start Date': '2026-06-01', 'End Date': '2026-06-03', 'Blocked By': '',     'Dependency': '' },
+  { 'Task ID': 'T2', 'Task Name': 'Design mockups',       'Assignee': 'Bob',   'Status': 'Done',        'Start Date': '2026-06-04', 'End Date': '2026-06-07', 'Blocked By': 'T1',   'Dependency': '' },
+  { 'Task ID': 'T3', 'Task Name': 'Build frontend',       'Assignee': 'Carol', 'Status': 'In Progress', 'Start Date': '2026-06-08', 'End Date': '2026-06-18', 'Blocked By': 'T2',   'Dependency': 'T4' },
+  { 'Task ID': 'T4', 'Task Name': 'Build backend API',    'Assignee': 'Dave',  'Status': 'In Progress', 'Start Date': '2026-06-08', 'End Date': '2026-06-20', 'Blocked By': 'T1',   'Dependency': '' },
+  { 'Task ID': 'T5', 'Task Name': 'Write unit tests',     'Assignee': 'Eve',   'Status': 'Todo',        'Start Date': '2026-06-15', 'End Date': '2026-06-22', 'Blocked By': 'T3,T4','Dependency': '' },
+  { 'Task ID': 'T6', 'Task Name': 'Deploy to staging',    'Assignee': 'Alice', 'Status': 'Todo',        'Start Date': '2026-06-23', 'End Date': '2026-06-24', 'Blocked By': 'T5',   'Dependency': 'T5' },
 ]
 
 const ws = XLSX.utils.json_to_sheet(rows)

@@ -3,9 +3,9 @@ import { resolveBlockers } from '@/lib/taskUtils'
 import type { Task } from '@/types/task'
 
 const tasks: Task[] = [
-  { id: 'T1', name: 'Design', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], notes: '' },
-  { id: 'T2', name: 'Build', description: '', assignee: 'Bob', status: 'In Progress', startDate: '2026-06-06', endDate: '2026-06-15', blockedBy: ['T1'], notes: '' },
-  { id: 'T3', name: 'Test', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], notes: '' },
+  { id: 'T1', name: 'Design', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' },
+  { id: 'T2', name: 'Build', description: '', assignee: 'Bob', status: 'In Progress', startDate: '2026-06-06', endDate: '2026-06-15', blockedBy: ['T1'], dependsOn: [], notes: '' },
+  { id: 'T3', name: 'Test', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' },
 ]
 
 describe('resolveBlockers', () => {

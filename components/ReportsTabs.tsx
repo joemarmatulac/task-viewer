@@ -21,6 +21,7 @@ const TOP_TABS: { id: TopTab; label: string }[] = [
 export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsProps) {
   const [activeTab, setActiveTab] = useState<TopTab>('kanban')
   const [assigneeFilter, setAssigneeFilter] = useState('All')
+  const [statusFilter, setStatusFilter] = useState<'All' | TaskStatus>('All')
   const [startDateFilter, setStartDateFilter] = useState('')
   const [endDateFilter, setEndDateFilter] = useState('')
 
@@ -32,16 +33,18 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
   const filtered = useMemo(() => {
     return tasks.filter(t => {
       if (assigneeFilter !== 'All' && t.assignee !== assigneeFilter) return false
+      if (statusFilter !== 'All' && t.status !== statusFilter) return false
       if (startDateFilter && t.startDate && t.startDate < startDateFilter) return false
       if (endDateFilter && t.endDate && t.endDate > endDateFilter) return false
       return true
     })
-  }, [tasks, assigneeFilter, startDateFilter, endDateFilter])
+  }, [tasks, assigneeFilter, statusFilter, startDateFilter, endDateFilter])
 
-  const hasFilters = assigneeFilter !== 'All' || startDateFilter !== '' || endDateFilter !== ''
+  const hasFilters = assigneeFilter !== 'All' || statusFilter !== 'All' || startDateFilter !== '' || endDateFilter !== ''
 
   function clearFilters() {
     setAssigneeFilter('All')
+    setStatusFilter('All')
     setStartDateFilter('')
     setEndDateFilter('')
   }
@@ -76,6 +79,20 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
             {assignees.map(a => (
               <option key={a} value={a}>{a}</option>
             ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-gray-500">Status</label>
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value as 'All' | TaskStatus)}
+            className="text-sm rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-700 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+          >
+            <option value="All">All</option>
+            <option value="Todo">Todo</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Done">Done</option>
           </select>
         </div>
 
