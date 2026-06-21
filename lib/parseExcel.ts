@@ -3,17 +3,20 @@ import type { Task, TaskStatus } from '@/types/task'
 
 type RawRow = Record<string, string | number | undefined>
 
-const VALID_STATUSES: TaskStatus[] = ['Todo', 'In Progress', 'Done']
+const VALID_STATUSES: TaskStatus[] = ['Todo', 'In Progress', 'On Hold', 'Done']
 
 export interface ParseResult {
   tasks: Task[]
   warnings: string[]
+  sheetName?: string
 }
 
 function toStr(val: string | number | undefined): string {
   if (val === undefined || val === null) return ''
   return String(val).trim()
 }
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 
 function parseDate(val: string | number | undefined): string {
   if (typeof val === 'number') {
@@ -23,7 +26,18 @@ function parseDate(val: string | number | undefined): string {
     const d = String(date.d).padStart(2, '0')
     return `${y}-${m}-${d}`
   }
-  return toStr(val)
+  const s = toStr(val)
+  if (!s) return ''
+  if (ISO_DATE.test(s)) return s
+  // Attempt to parse human-readable strings like "Jun 24, 2026" or "2026/06/24"
+  const d = new Date(s)
+  if (!isNaN(d.getTime())) {
+    const y = d.getFullYear()
+    const mo = String(d.getMonth() + 1).padStart(2, '0')
+    const dy = String(d.getDate()).padStart(2, '0')
+    return `${y}-${mo}-${dy}`
+  }
+  return s
 }
 
 export function parseRows(rows: RawRow[]): ParseResult {
@@ -76,6 +90,10 @@ export function parseRows(rows: RawRow[]): ParseResult {
       status,
       startDate,
       endDate,
+      actualStartDate: parseDate(row['Actual Start Date']),
+      actualEndDate:   parseDate(row['Actual End Date']),
+      onHoldDate:      parseDate(row['On Hold Date']),
+      onHoldReason:    toStr(row['On Hold Reason']),
       blockedBy,
       dependsOn,
       notes: toStr(row['Notes']),
@@ -88,7 +106,9 @@ export function parseRows(rows: RawRow[]): ParseResult {
 export async function parseExcelFile(file: File): Promise<ParseResult> {
   const buffer = await file.arrayBuffer()
   const workbook = XLSX.read(buffer, { type: 'array', cellDates: false })
-  const sheet = workbook.Sheets[workbook.SheetNames[0]]
+  const sheetName = workbook.SheetNames[0]
+  const sheet = workbook.Sheets[sheetName]
   const rows = XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: '' })
-  return parseRows(rows)
+  const result = parseRows(rows)
+  return { ...result, sheetName }
 }

@@ -26,8 +26,9 @@ export function resolveBlockers(tasks: Task[]): EnrichedTask[] {
 
 export function groupByStatus(tasks: EnrichedTask[]) {
   return {
-    'Todo': tasks.filter((t) => t.status === 'Todo'),
+    'Todo':        tasks.filter((t) => t.status === 'Todo'),
     'In Progress': tasks.filter((t) => t.status === 'In Progress'),
-    'Done': tasks.filter((t) => t.status === 'Done'),
+    'On Hold':     tasks.filter((t) => t.status === 'On Hold'),
+    'Done':        tasks.filter((t) => t.status === 'Done'),
   }
 }

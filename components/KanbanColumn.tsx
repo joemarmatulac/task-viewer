@@ -9,12 +9,15 @@ interface KanbanColumnProps {
   status: TaskStatus
   tasks: EnrichedTask[]
   accentClass: string
-  onStatusChange: (id: string, status: TaskStatus) => void
+  /** If provided, only cards whose current status is in this list can be dropped here. */
+  allowedSources?: TaskStatus[]
+  onStatusChange: (id: string, status: TaskStatus, sourceStatus: TaskStatus) => void
   onEditTask: (id: string) => void
 }
 
-export function KanbanColumn({ title, status, tasks, accentClass, onStatusChange, onEditTask }: KanbanColumnProps) {
+export function KanbanColumn({ title, status, tasks, accentClass, allowedSources, onStatusChange, onEditTask }: KanbanColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false)
+  const [isRejected, setIsRejected] = useState(false)
 
   function handleDragOver(e: React.DragEvent) {
     e.preventDefault()
@@ -29,8 +32,23 @@ export function KanbanColumn({ title, status, tasks, accentClass, onStatusChange
     e.preventDefault()
     setIsDragOver(false)
     const taskId = e.dataTransfer.getData('taskId')
-    if (taskId) onStatusChange(taskId, status)
+    const sourceStatus = e.dataTransfer.getData('sourceStatus') as TaskStatus
+    if (!taskId) return
+
+    if (allowedSources && !allowedSources.includes(sourceStatus)) {
+      setIsRejected(true)
+      setTimeout(() => setIsRejected(false), 600)
+      return
+    }
+
+    onStatusChange(taskId, status, sourceStatus)
   }
+
+  const dropClass = isRejected
+    ? 'bg-red-50 ring-2 ring-red-300 ring-inset'
+    : isDragOver
+      ? 'bg-blue-50 ring-2 ring-blue-300 ring-inset'
+      : ''
 
   return (
     <div className="flex flex-col gap-3 min-w-[280px] flex-1">
@@ -42,16 +60,16 @@ export function KanbanColumn({ title, status, tasks, accentClass, onStatusChange
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`flex flex-col gap-2 min-h-[120px] rounded-lg transition-colors ${
-          isDragOver ? 'bg-blue-50 ring-2 ring-blue-300 ring-inset' : ''
-        }`}
+        className={`flex flex-col gap-2 min-h-[120px] rounded-lg transition-colors ${dropClass}`}
       >
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} onEditTask={onEditTask} />
         ))}
         {tasks.length === 0 && (
-          <p className={`text-xs text-center py-6 ${isDragOver ? 'text-blue-400' : 'text-gray-400'}`}>
-            {isDragOver ? 'Drop here' : 'No tasks'}
+          <p className={`text-xs text-center py-6 ${
+            isRejected ? 'text-red-400' : isDragOver ? 'text-blue-400' : 'text-gray-400'
+          }`}>
+            {isRejected ? 'Only In Progress cards can be put On Hold' : isDragOver ? 'Drop here' : 'No tasks'}
           </p>
         )}
       </div>

@@ -9,7 +9,7 @@ import { exportTasksToExcel } from '@/lib/exportExcel'
 import { resolveBlockers } from '@/lib/taskUtils'
 import type { EnrichedTask, TaskStatus } from '@/types/task'
 
-const REQUIRED_COLUMNS = ['Task ID', 'Task Name', 'Task Description', 'Assignee', 'Status', 'Start Date', 'End Date', 'Blocked By', 'Notes']
+const REQUIRED_COLUMNS = ['Task ID', 'Task Name', 'Task Description', 'Assignee', 'Status', 'Start Date', 'End Date', 'Actual Start Date', 'Actual End Date', 'On Hold Date', 'On Hold Reason', 'Blocked By', 'Notes']
 const REQUIRED_FIELDS  = ['Task ID', 'Task Name', 'Status', 'Start Date', 'End Date']
 
 export default function Page() {
@@ -17,14 +17,30 @@ export default function Page() {
   const [warnings, setWarnings] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
+  const [sheetName, setSheetName] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [dlMinor, setDlMinor] = useState(0)
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 
   const editingTask = editingTaskId ? tasks.find(t => t.id === editingTaskId) ?? null : null
 
-  function handleStatusChange(id: string, status: TaskStatus) {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, status } : t))
+  function handleStatusChange(id: string, status: TaskStatus, meta?: { onHoldReason?: string }) {
+    const today = new Date().toISOString().split('T')[0]
+    setTasks(prev => prev.map(t => {
+      if (t.id !== id) return t
+      const updates: Partial<typeof t> = { status }
+      if (status === 'In Progress' && !t.actualStartDate) {
+        updates.actualStartDate = today
+      }
+      if (status === 'Done' && !t.actualEndDate) {
+        updates.actualEndDate = today
+      }
+      if (status === 'On Hold') {
+        updates.onHoldDate = today
+        updates.onHoldReason = meta?.onHoldReason ?? ''
+      }
+      return { ...t, ...updates }
+    }))
   }
 
   function handleBlockerSave(blockedBy: string[], dependsOn: string[]) {
@@ -46,10 +62,11 @@ export default function Page() {
     setError(null)
     setWarnings([])
     try {
-      const { tasks: parsed, warnings: warn } = await parseExcelFile(file)
+      const { tasks: parsed, warnings: warn, sheetName: sheet } = await parseExcelFile(file)
       setTasks(resolveBlockers(parsed))
       setWarnings(warn)
       setFileName(file.name)
+      setSheetName(sheet ?? null)
       setDlMinor(0)
     } catch (e) {
       setError('Failed to parse the Excel file. Check the column names match the expected format.')
@@ -63,7 +80,7 @@ export default function Page() {
     <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Daily Standup Board</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{sheetName ?? 'Daily Standup Board'}</h1>
           {fileName && <p className="text-sm text-gray-400 mt-0.5">Loaded: {fileName}</p>}
         </div>
         {tasks.length > 0 && (
@@ -75,7 +92,7 @@ export default function Page() {
               Download updated Excel
             </button>
             <button
-              onClick={() => { setTasks([]); setFileName(null); setWarnings([]) }}
+              onClick={() => { setTasks([]); setFileName(null); setSheetName(null); setWarnings([]) }}
               className="text-sm text-gray-500 hover:text-gray-700 underline"
             >
               Load different file
@@ -144,9 +161,8 @@ export default function Page() {
               <li>
                 <span className="font-medium text-gray-800">Manage tasks on the Kanban board</span>
                 <p className="mt-1 ml-5 text-gray-500">
-                  Tasks are grouped into <strong>Todo</strong>, <strong>In Progress</strong>, and <strong>Done</strong> columns.
-                  Drag any card to a different column to update its status. Use the filter bar to narrow by
-                  assignee, start date, or end date.
+                  Tasks are grouped into <strong>Todo</strong>, <strong>In Progress</strong>, <strong>On Hold</strong>, and <strong>Done</strong> columns.
+                  Drag any card to a different column to update its status. Moving a card to <strong>In Progress</strong> automatically records today as the <strong>Actual Start Date</strong>; moving to <strong>Done</strong> records the <strong>Actual End Date</strong>. Only <strong>In Progress</strong> cards can be moved to <strong>On Hold</strong> — a reason prompt will appear. Use the filter bar to narrow by assignee, status, or date.
                 </p>
               </li>
 
@@ -172,7 +188,7 @@ export default function Page() {
             <div className="border-t border-gray-100 pt-4">
               <p className="text-xs text-gray-400">
                 <strong className="text-gray-500">Valid Status values:</strong>{' '}
-                {['Todo', 'In Progress', 'Done'].map(s => (
+                {['Todo', 'In Progress', 'On Hold', 'Done'].map(s => (
                   <code key={s} className="bg-gray-100 px-1.5 py-0.5 rounded text-xs mr-1">{s}</code>
                 ))}
                 — any other value defaults to <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">Todo</code>.

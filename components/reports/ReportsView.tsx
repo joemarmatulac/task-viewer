@@ -1,30 +1,44 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import type { EnrichedTask } from '@/types/task'
+
+const ChartsView = dynamic(
+  () => import('./ChartsView').then(m => ({ default: m.ChartsView })),
+  {
+    ssr: false,
+    loading: () => (
+      <p className="text-sm text-gray-400 text-center py-12">Loading charts…</p>
+    ),
+  }
+)
 import { BlockedTasksReport } from './BlockedTasksReport'
 import { WorkloadReport } from './WorkloadReport'
 import { SprintReport } from './SprintReport'
 import { DependencyChainReport } from './DependencyChainReport'
+import { OnHoldReport } from './OnHoldReport'
 
 interface ReportsViewProps {
   tasks: EnrichedTask[]
 }
 
-type SubTab = 'blocked' | 'workload' | 'sprint' | 'dependency'
+type SubTab = 'charts' | 'blocked' | 'workload' | 'sprint' | 'dependency' | 'onhold'
 
 const SUB_TABS: { id: SubTab; label: string }[] = [
-  { id: 'blocked', label: 'Blocked' },
-  { id: 'workload', label: 'Workload' },
-  { id: 'sprint', label: 'Sprint' },
+  { id: 'charts',     label: '📊 Charts' },
+  { id: 'blocked',    label: 'Blocked' },
+  { id: 'workload',   label: 'Workload' },
+  { id: 'sprint',     label: 'Sprint' },
   { id: 'dependency', label: 'Dependency Chains' },
+  { id: 'onhold',     label: 'On Hold Log' },
 ]
 
 export function ReportsView({ tasks }: ReportsViewProps) {
-  const [activeTab, setActiveTab] = useState<SubTab>('blocked')
+  const [activeTab, setActiveTab] = useState<SubTab>('charts')
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 min-w-0">
       <div className="flex gap-1 border-b border-gray-200">
         {SUB_TABS.map(({ id, label }) => (
           <button
@@ -42,10 +56,12 @@ export function ReportsView({ tasks }: ReportsViewProps) {
       </div>
 
       <div>
-        {activeTab === 'blocked' && <BlockedTasksReport tasks={tasks} />}
-        {activeTab === 'workload' && <WorkloadReport tasks={tasks} />}
-        {activeTab === 'sprint' && <SprintReport tasks={tasks} />}
+        {activeTab === 'charts'     && <ChartsView tasks={tasks} />}
+        {activeTab === 'blocked'    && <BlockedTasksReport tasks={tasks} />}
+        {activeTab === 'workload'   && <WorkloadReport tasks={tasks} />}
+        {activeTab === 'sprint'     && <SprintReport tasks={tasks} />}
         {activeTab === 'dependency' && <DependencyChainReport tasks={tasks} />}
+        {activeTab === 'onhold'     && <OnHoldReport tasks={tasks} />}
       </div>
     </div>
   )

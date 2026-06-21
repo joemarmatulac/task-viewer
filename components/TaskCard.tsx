@@ -9,6 +9,7 @@ interface TaskCardProps {
 export function TaskCard({ task, onEditTask }: TaskCardProps) {
   function handleDragStart(e: React.DragEvent) {
     e.dataTransfer.setData('taskId', task.id)
+    e.dataTransfer.setData('sourceStatus', task.status)
     e.dataTransfer.effectAllowed = 'move'
   }
 
@@ -31,11 +32,24 @@ export function TaskCard({ task, onEditTask }: TaskCardProps) {
 
       {(task.startDate || task.endDate) && (
         <p className="text-xs text-gray-400">
-          {task.startDate} → {task.endDate}
+          Planned: {task.startDate} → {task.endDate}
         </p>
       )}
 
-      {task.blockedByTasks.length > 0 && (
+      {(task.actualStartDate || task.actualEndDate) && (
+        <p className="text-xs text-blue-500">
+          Actual: {task.actualStartDate || '—'} → {task.actualEndDate || '…'}
+        </p>
+      )}
+
+      {task.onHoldDate && (
+        <div className="text-xs text-amber-600 bg-amber-50 rounded px-2 py-1">
+          <span className="font-medium">On Hold</span> since {task.onHoldDate}
+          {task.onHoldReason && <span className="text-amber-500"> · {task.onHoldReason}</span>}
+        </div>
+      )}
+
+      {(task.blockedByTasks?.length ?? 0) > 0 && (
         <div className="flex flex-wrap gap-1 pt-1">
           {task.blockedByTasks.map((t) => (
             <BlockerBadge key={t.id} direction="blocked-by" taskName={t.name} taskId={t.id} />
@@ -43,7 +57,7 @@ export function TaskCard({ task, onEditTask }: TaskCardProps) {
         </div>
       )}
 
-      {task.dependsOnTasks.length > 0 && (
+      {(task.dependsOnTasks?.length ?? 0) > 0 && (
         <div className="flex flex-wrap gap-1 pt-1">
           {task.dependsOnTasks.map((t) => (
             <BlockerBadge key={t.id} direction="depends-on" taskName={t.name} taskId={t.id} />

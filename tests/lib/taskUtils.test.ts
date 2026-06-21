@@ -2,10 +2,14 @@ import { describe, it, expect } from 'vitest'
 import { resolveBlockers } from '@/lib/taskUtils'
 import type { Task } from '@/types/task'
 
+const BASE: Pick<Task, 'actualStartDate' | 'actualEndDate' | 'onHoldDate' | 'onHoldReason'> = {
+  actualStartDate: '', actualEndDate: '', onHoldDate: '', onHoldReason: '',
+}
+
 const tasks: Task[] = [
-  { id: 'T1', name: 'Design', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' },
-  { id: 'T2', name: 'Build', description: '', assignee: 'Bob', status: 'In Progress', startDate: '2026-06-06', endDate: '2026-06-15', blockedBy: ['T1'], dependsOn: [], notes: '' },
-  { id: 'T3', name: 'Test', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' },
+  { ...BASE, id: 'T1', name: 'Design', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' },
+  { ...BASE, id: 'T2', name: 'Build', description: '', assignee: 'Bob', status: 'In Progress', startDate: '2026-06-06', endDate: '2026-06-15', blockedBy: ['T1'], dependsOn: [], notes: '' },
+  { ...BASE, id: 'T3', name: 'Test', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' },
 ]
 
 describe('resolveBlockers', () => {
@@ -34,7 +38,7 @@ describe('resolveBlockers', () => {
 
   it('silently ignores Blocked By IDs that do not exist', () => {
     const withOrphan: Task[] = [
-      { ...tasks[0], blockedBy: ['GHOST'] },
+      { ...BASE, ...tasks[0], blockedBy: ['GHOST'] },
     ]
     const enriched = resolveBlockers(withOrphan)
     expect(enriched[0].blockedByTasks).toHaveLength(0)

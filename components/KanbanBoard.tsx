@@ -1,35 +1,67 @@
+'use client'
+
+import { useState } from 'react'
 import type { EnrichedTask, TaskStatus } from '@/types/task'
 import { groupByStatus } from '@/lib/taskUtils'
 import { KanbanColumn } from './KanbanColumn'
+import { OnHoldModal } from './OnHoldModal'
 
 interface KanbanBoardProps {
   tasks: EnrichedTask[]
-  onStatusChange: (id: string, status: TaskStatus) => void
+  onStatusChange: (id: string, status: TaskStatus, meta?: { onHoldReason?: string }) => void
   onEditTask: (id: string) => void
 }
 
-const COLUMNS = [
-  { status: 'Todo' as const,        label: 'Todo',        accent: 'border-gray-300' },
-  { status: 'In Progress' as const, label: 'In Progress', accent: 'border-blue-400' },
-  { status: 'Done' as const,        label: 'Done',        accent: 'border-green-400' },
+const COLUMNS: { status: TaskStatus; label: string; accent: string; allowedSources?: TaskStatus[] }[] = [
+  { status: 'Todo',        label: 'Todo',        accent: 'border-gray-300' },
+  { status: 'In Progress', label: 'In Progress', accent: 'border-blue-400' },
+  { status: 'On Hold',     label: 'On Hold',     accent: 'border-amber-400', allowedSources: ['In Progress'] },
+  { status: 'Done',        label: 'Done',        accent: 'border-green-400' },
 ]
 
 export function KanbanBoard({ tasks, onStatusChange, onEditTask }: KanbanBoardProps) {
   const grouped = groupByStatus(tasks)
+  const [pendingOnHold, setPendingOnHold] = useState<{ id: string; name: string } | null>(null)
+
+  function handleColumnDrop(taskId: string, targetStatus: TaskStatus, sourceStatus: TaskStatus) {
+    if (targetStatus === 'On Hold') {
+      const task = tasks.find(t => t.id === taskId)
+      if (task) setPendingOnHold({ id: task.id, name: task.name })
+      return
+    }
+    onStatusChange(taskId, targetStatus)
+  }
+
+  function handleOnHoldConfirm(taskId: string, reason: string) {
+    setPendingOnHold(null)
+    onStatusChange(taskId, 'On Hold', { onHoldReason: reason })
+  }
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4">
-      {COLUMNS.map(({ status, label, accent }) => (
-        <KanbanColumn
-          key={status}
-          status={status}
-          title={label}
-          tasks={grouped[status]}
-          accentClass={accent}
-          onStatusChange={onStatusChange}
-          onEditTask={onEditTask}
+    <>
+      <div className="flex gap-4 overflow-x-auto pb-4">
+        {COLUMNS.map(({ status, label, accent, allowedSources }) => (
+          <KanbanColumn
+            key={status}
+            status={status}
+            title={label}
+            tasks={grouped[status]}
+            accentClass={accent}
+            allowedSources={allowedSources}
+            onStatusChange={handleColumnDrop}
+            onEditTask={onEditTask}
+          />
+        ))}
+      </div>
+
+      {pendingOnHold && (
+        <OnHoldModal
+          taskId={pendingOnHold.id}
+          taskName={pendingOnHold.name}
+          onConfirm={handleOnHoldConfirm}
+          onCancel={() => setPendingOnHold(null)}
         />
-      ))}
-    </div>
+      )}
+    </>
   )
 }
