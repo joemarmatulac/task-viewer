@@ -3,6 +3,7 @@ export type TaskStatus = 'Todo' | 'In Progress' | 'On Hold' | 'Done'
 export interface Task {
   id: string
   name: string
+  project: string
   description: string
   assignee: string
   status: TaskStatus

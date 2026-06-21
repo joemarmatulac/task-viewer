@@ -24,6 +24,7 @@ const baseTask: EnrichedTask = {
   ...BLANK_DATES,
   id: 'T2',
   name: 'Build frontend',
+  project: 'Alpha',
   description: '',
   assignee: 'Bob',
   status: 'In Progress',
@@ -32,8 +33,8 @@ const baseTask: EnrichedTask = {
   blockedBy: ['T1'],
   dependsOn: [],
   notes: '',
-  blockedByTasks: [{ ...BLANK_DATES, id: 'T1', name: 'Design mockups', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' }],
-  blocksTasks: [{ ...BLANK_DATES, id: 'T3', name: 'Write tests', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' }],
+  blockedByTasks: [{ ...BLANK_DATES, id: 'T1', name: 'Design mockups', project: 'Alpha', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' }],
+  blocksTasks: [{ ...BLANK_DATES, id: 'T3', name: 'Write tests', project: 'Alpha', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' }],
   dependsOnTasks: [],
   dependedOnByTasks: [],
 }

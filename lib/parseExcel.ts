@@ -49,9 +49,12 @@ export function parseRows(rows: RawRow[]): ParseResult {
     const id = toStr(row['Task ID'])
     const name = toStr(row['Task Name'])
 
+    const project = toStr(row['Project'])
+
     const missing: string[] = []
     if (!id) missing.push('Task ID')
     if (!name) missing.push('Task Name')
+    if (!project) missing.push('Project')
 
     const rawStatus = toStr(row['Status']) as TaskStatus
     if (!rawStatus) missing.push('Status')
@@ -85,6 +88,7 @@ export function parseRows(rows: RawRow[]): ParseResult {
     tasks.push({
       id,
       name,
+      project,
       description: toStr(row['Task Description']),
       assignee: toStr(row['Assignee']),
       status,

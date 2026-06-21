@@ -26,6 +26,7 @@ First sheet, row 1 must contain these headers exactly:
 |---|---|
 | Task ID | yes |
 | Task Name | yes |
+| Project | **yes** |
 | Assignee | no |
 | Status | **yes** |
 | Start Date | **yes** |

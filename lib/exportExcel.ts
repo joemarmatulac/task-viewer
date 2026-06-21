@@ -5,6 +5,7 @@ export function exportTasksToExcel(tasks: EnrichedTask[], originalName: string, 
   const rows = tasks.map(t => ({
     'Task ID':          t.id,
     'Task Name':        t.name,
+    'Project':          t.project,
     'Task Description': t.description,
     'Assignee':         t.assignee,
     'Status':           t.status,

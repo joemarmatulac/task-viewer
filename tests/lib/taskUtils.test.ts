@@ -7,9 +7,9 @@ const BASE: Pick<Task, 'actualStartDate' | 'actualEndDate' | 'onHoldDate' | 'onH
 }
 
 const tasks: Task[] = [
-  { ...BASE, id: 'T1', name: 'Design', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' },
-  { ...BASE, id: 'T2', name: 'Build', description: '', assignee: 'Bob', status: 'In Progress', startDate: '2026-06-06', endDate: '2026-06-15', blockedBy: ['T1'], dependsOn: [], notes: '' },
-  { ...BASE, id: 'T3', name: 'Test', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' },
+  { ...BASE, id: 'T1', name: 'Design', project: 'Alpha', description: '', assignee: 'Alice', status: 'Done', startDate: '2026-06-01', endDate: '2026-06-05', blockedBy: [], dependsOn: [], notes: '' },
+  { ...BASE, id: 'T2', name: 'Build', project: 'Alpha', description: '', assignee: 'Bob', status: 'In Progress', startDate: '2026-06-06', endDate: '2026-06-15', blockedBy: ['T1'], dependsOn: [], notes: '' },
+  { ...BASE, id: 'T3', name: 'Test', project: 'Alpha', description: '', assignee: 'Carol', status: 'Todo', startDate: '2026-06-10', endDate: '2026-06-20', blockedBy: ['T1', 'T2'], dependsOn: [], notes: '' },
 ]
 
 describe('resolveBlockers', () => {

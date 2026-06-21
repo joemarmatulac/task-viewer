@@ -24,6 +24,12 @@ export function TaskCard({ task, onEditTask }: TaskCardProps) {
         <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">{task.assignee}</span>
       </div>
 
+      {task.project && (
+        <span className="inline-block text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full font-medium">
+          {task.project}
+        </span>
+      )}
+
       <p className="text-sm font-medium text-gray-800 leading-snug">{task.name}</p>
 
       {task.description && (
