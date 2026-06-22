@@ -85,12 +85,16 @@ export function parseRows(rows: RawRow[]): ParseResult {
       ? dependsOnRaw.split(',').map((s) => s.trim()).filter(Boolean)
       : []
 
+    const spRaw = row['Story Points']
+    const storyPoints = typeof spRaw === 'number' ? spRaw : (parseInt(toStr(spRaw), 10) || 0)
+
     tasks.push({
       id,
       name,
       project,
       description: toStr(row['Task Description']),
       assignee: toStr(row['Assignee']),
+      storyPoints,
       status,
       startDate,
       endDate,

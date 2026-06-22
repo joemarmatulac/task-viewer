@@ -20,24 +20,36 @@ A Next.js app for visualising sprint tasks from an Excel file on a Kanban board.
 
 ## Excel format
 
-First sheet, row 1 must contain these headers exactly:
+First sheet (or whichever sheet the user picks), row 1 must contain these headers exactly:
 
 | Column | Required |
 |---|---|
-| Task ID | yes |
-| Task Name | yes |
+| Task ID | **yes** |
+| Task Name | **yes** |
 | Project | **yes** |
+| Task Description | no |
 | Assignee | no |
+| Story Points | no |
 | Status | **yes** |
 | Target Start Date | **yes** |
 | Target End Date | **yes** |
+| Actual Start Date | no |
+| Actual End Date | no |
+| On Hold Date | no |
+| On Hold Reason | no |
 | Blocked By | no |
+| Dependency | no |
+| Notes | no |
 
-Rows missing **Status**, **Target Start Date**, or **Target End Date** are skipped and surfaced as amber warnings.
+Rows missing any **required** field are skipped and surfaced as amber warnings.
 
-Valid `Status` values: `Todo`, `In Progress`, `Done`. Anything else defaults to `Todo`.
+Valid `Status` values: `Todo`, `In Progress`, `On Hold`, `Done`. Anything else defaults to `Todo`.
 
-`Blocked By` is a comma-separated list of Task IDs (e.g. `T1,T3`).
+`Blocked By` and `Dependency` accept comma-separated Task IDs (e.g. `T1,T3`).
+
+Dates can be Excel date cells or text in `YYYY-MM-DD` format.
+
+`Actual Start Date` is auto-set when a task moves to **In Progress**; `Actual End Date` when moved to **Done**; `On Hold Date` + `On Hold Reason` when moved to **On Hold**.
 
 ## Download versioning
 

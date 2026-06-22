@@ -23,6 +23,8 @@ export function WorkloadReport({ tasks }: WorkloadReportProps) {
     return <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">No tasks loaded.</div>
   }
 
+  const hasStoryPoints = tasks.some(t => t.storyPoints > 0)
+
   const byAssignee = tasks.reduce<Record<string, EnrichedTask[]>>((acc, task) => {
     const key = task.assignee || 'Unassigned'
     if (!acc[key]) acc[key] = []
@@ -39,6 +41,8 @@ export function WorkloadReport({ tasks }: WorkloadReportProps) {
         const done = assigneeTasks.filter((t) => t.status === 'Done').length
         const inProgress = assigneeTasks.filter((t) => t.status === 'In Progress').length
         const todo = assigneeTasks.filter((t) => t.status === 'Todo').length
+        const totalSP = assigneeTasks.reduce((s, t) => s + (t.storyPoints || 0), 0)
+        const doneSP  = assigneeTasks.filter(t => t.status === 'Done').reduce((s, t) => s + (t.storyPoints || 0), 0)
 
         const summaryParts: string[] = []
         if (done > 0) summaryParts.push(`${done} done`)
@@ -47,15 +51,25 @@ export function WorkloadReport({ tasks }: WorkloadReportProps) {
 
         return (
           <section key={assignee}>
-            <div className="flex items-baseline gap-3 mb-3">
+            <div className="flex items-baseline gap-3 mb-3 flex-wrap">
               <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{assignee}</h3>
               <span className="text-xs text-gray-400 dark:text-gray-500">{summaryParts.join(', ')}</span>
+              {hasStoryPoints && totalSP > 0 && (
+                <span className="text-xs font-medium text-purple-600 dark:text-purple-400">
+                  {doneSP}/{totalSP} SP done
+                </span>
+              )}
             </div>
             <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
               {assigneeTasks.map((task) => (
                 <div key={task.id} className="flex items-center gap-3 px-4 py-2.5">
                   <span className="text-xs text-gray-400 dark:text-gray-500 font-mono w-16 shrink-0">{task.id}</span>
                   <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 min-w-0 truncate">{task.name}</span>
+                  {hasStoryPoints && (
+                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 w-12 text-right shrink-0">
+                      {task.storyPoints > 0 ? `${task.storyPoints} SP` : '—'}
+                    </span>
+                  )}
                   <StatusBadge status={task.status} />
                 </div>
               ))}

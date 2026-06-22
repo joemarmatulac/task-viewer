@@ -48,6 +48,7 @@ describe('parseRows', () => {
       project: 'Alpha',
       description: '',
       assignee: 'Alice',
+      storyPoints: 0,
       status: 'Done',
       startDate: '2026-06-01',
       endDate: '2026-06-05',
@@ -59,6 +60,23 @@ describe('parseRows', () => {
       dependsOn: [],
       notes: '',
     })
+  })
+
+  it('parses numeric Story Points', () => {
+    const rows = [{ ...validRows[0], 'Story Points': 5 }]
+    const { tasks: [t] } = parseRows(rows)
+    expect(t.storyPoints).toBe(5)
+  })
+
+  it('parses string Story Points', () => {
+    const rows = [{ ...validRows[0], 'Story Points': '8' }]
+    const { tasks: [t] } = parseRows(rows)
+    expect(t.storyPoints).toBe(8)
+  })
+
+  it('defaults storyPoints to 0 when missing', () => {
+    const { tasks: [t] } = parseRows(validRows)
+    expect(t.storyPoints).toBe(0)
   })
 
   it('parses comma-separated Blocked By into an array', () => {

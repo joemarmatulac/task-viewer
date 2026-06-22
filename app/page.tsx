@@ -9,8 +9,8 @@ import { exportTasksToExcel } from '@/lib/exportExcel'
 import { resolveBlockers } from '@/lib/taskUtils'
 import type { EnrichedTask, TaskStatus } from '@/types/task'
 
-const REQUIRED_COLUMNS = ['Task ID', 'Task Name', 'Task Description', 'Assignee', 'Status', 'Target Start Date', 'Target End Date', 'Actual Start Date', 'Actual End Date', 'On Hold Date', 'On Hold Reason', 'Blocked By', 'Notes']
-const REQUIRED_FIELDS  = ['Task ID', 'Task Name', 'Status', 'Target Start Date', 'Target End Date']
+const REQUIRED_COLUMNS = ['Task ID', 'Task Name', 'Project', 'Task Description', 'Assignee', 'Story Points', 'Status', 'Target Start Date', 'Target End Date', 'Actual Start Date', 'Actual End Date', 'On Hold Date', 'On Hold Reason', 'Blocked By', 'Dependency', 'Notes']
+const REQUIRED_FIELDS  = ['Task ID', 'Task Name', 'Project', 'Status', 'Target Start Date', 'Target End Date']
 
 export default function Page() {
   const [tasks, setTasks] = useState<EnrichedTask[]>([])
@@ -188,7 +188,20 @@ export default function Page() {
           <FileUpload onFile={handleFile} isLoading={isLoading} />
 
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-5">
-            <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">How to use this app</h2>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-base font-semibold text-gray-800 dark:text-gray-200">How to use this app</h2>
+              <a
+                href="/sample-tasks.xlsx"
+                download="sample-tasks.xlsx"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-600 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-950 px-3 py-1.5 rounded-md transition-colors shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
+                  <path d="M8.75 2.75a.75.75 0 0 0-1.5 0v5.69L5.03 6.22a.75.75 0 0 0-1.06 1.06l3.5 3.5a.75.75 0 0 0 1.06 0l3.5-3.5a.75.75 0 0 0-1.06-1.06L8.75 8.44V2.75Z" />
+                  <path d="M3.5 9.75a.75.75 0 0 0-1.5 0v1.5A2.75 2.75 0 0 0 4.75 14h6.5A2.75 2.75 0 0 0 14 11.25v-1.5a.75.75 0 0 0-1.5 0v1.5c0 .69-.56 1.25-1.25 1.25h-6.5c-.69 0-1.25-.56-1.25-1.25v-1.5Z" />
+                </svg>
+                Download sample file
+              </a>
+            </div>
 
             <ol className="space-y-4 text-sm text-gray-600 dark:text-gray-400 list-decimal list-inside">
               <li>
@@ -212,6 +225,10 @@ export default function Page() {
                 </div>
                 <p className="mt-2 ml-5 text-xs text-gray-400 dark:text-gray-500">
                   * Required — rows missing these fields will be skipped with a warning.
+                  <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">Blocked By</code> and{' '}
+                  <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">Dependency</code> accept
+                  comma-separated Task IDs (e.g. <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">T1,T3</code>).
+                  Dates can be Excel date cells or text in <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">YYYY-MM-DD</code> format.
                 </p>
               </li>
 
@@ -220,7 +237,8 @@ export default function Page() {
                 <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
                   Drag and drop your <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">.xlsx</code> file onto
                   the upload area above, or click it to browse. If the file has multiple sheets, you will be
-                  asked to choose which one to load.
+                  asked to choose which one to load. You can switch sheets at any time using the{' '}
+                  <strong>Sheet</strong> dropdown in the top-right.
                 </p>
               </li>
 
@@ -228,15 +246,29 @@ export default function Page() {
                 <span className="font-medium text-gray-800 dark:text-gray-200">Manage tasks on the Kanban board</span>
                 <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
                   Tasks are grouped into <strong>Todo</strong>, <strong>In Progress</strong>, <strong>On Hold</strong>, and <strong>Done</strong> columns.
-                  Drag any card to a different column to update its status. Moving a card to <strong>In Progress</strong> automatically records today as the <strong>Actual Start Date</strong>; moving to <strong>Done</strong> records the <strong>Actual End Date</strong>. Only <strong>In Progress</strong> cards can be moved to <strong>On Hold</strong> — a reason prompt will appear. Use the filter bar to narrow by assignee, status, or date.
+                  Drag any card to a different column to update its status. Moving a card to <strong>In Progress</strong> automatically
+                  records today as the <strong>Actual Start Date</strong>; moving to <strong>Done</strong> records the <strong>Actual End Date</strong>.
+                  Only <strong>In Progress</strong> cards can be moved to <strong>On Hold</strong> — a reason prompt will appear.
+                  Hover over any card and click <strong>Edit</strong> to update blockers and dependency relationships.
+                  Use the filter bar to narrow by assignee, status, or target date range.
                 </p>
               </li>
 
               <li>
-                <span className="font-medium text-gray-800 dark:text-gray-200">Set blockers</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">Explore Reports</span>
                 <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
-                  Hover over any card and click <strong>Edit blockers</strong> to choose which tasks block it.
-                  Blocker relationships are shown as badges on each card and included in the downloaded Excel.
+                  Switch to the <strong>Reports</strong> tab to access six built-in views:
+                </p>
+                <ul className="mt-1.5 ml-5 space-y-0.5 list-disc list-inside text-gray-500 dark:text-gray-400">
+                  <li><strong>Charts</strong> — burndown, velocity, story-point KPIs, and SP by assignee</li>
+                  <li><strong>Blocked</strong> — tasks currently blocked by unfinished dependencies</li>
+                  <li><strong>Workload</strong> — task and story-point load grouped by assignee</li>
+                  <li><strong>Sprint</strong> — tasks organised by due-date buckets (overdue, this week, upcoming, completed)</li>
+                  <li><strong>Dependency Chains</strong> — visualises task dependency trees</li>
+                  <li><strong>On Hold Log</strong> — history of tasks put on hold with reasons and dates</li>
+                </ul>
+                <p className="mt-1.5 ml-5 text-gray-500 dark:text-gray-400">
+                  All reports respect the active filter bar selections.
                 </p>
               </li>
 
@@ -245,8 +277,9 @@ export default function Page() {
                 <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
                   Click <strong>Download updated Excel</strong> in the top-right to export the current board
                   state. The file is saved with a version suffix (e.g.{' '}
-                  <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">de-sprints_v1.0.xlsx</code>),
-                  incrementing each download so previous versions are preserved.
+                  <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">my-sprints_v1.0.xlsx</code>),
+                  incrementing on each download so previous versions are preserved. Load a new file to reset to{' '}
+                  <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">v1.0</code>.
                 </p>
               </li>
             </ol>

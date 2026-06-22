@@ -6,6 +6,7 @@ export interface Task {
   project: string
   description: string
   assignee: string
+  storyPoints: number      // 0 when not set
   status: TaskStatus
   startDate: string        // YYYY-MM-DD (planned)
   endDate: string          // YYYY-MM-DD (planned)
