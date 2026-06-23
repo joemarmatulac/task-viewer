@@ -12,6 +12,10 @@ function StatusBadge({ status }: { status: string }) {
       ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
       : status === 'In Progress'
       ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400'
+      : status === 'Validation & Testing'
+      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400'
+      : status === 'On Hold'
+      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400'
       : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cls}`}>{status}</span>
@@ -38,15 +42,17 @@ export function WorkloadReport({ tasks }: WorkloadReportProps) {
     <div className="space-y-6">
       {assignees.map((assignee) => {
         const assigneeTasks = byAssignee[assignee]
-        const done = assigneeTasks.filter((t) => t.status === 'Done').length
-        const inProgress = assigneeTasks.filter((t) => t.status === 'In Progress').length
-        const todo = assigneeTasks.filter((t) => t.status === 'Todo').length
+        const done              = assigneeTasks.filter((t) => t.status === 'Done').length
+        const inProgress        = assigneeTasks.filter((t) => t.status === 'In Progress').length
+        const validationTesting = assigneeTasks.filter((t) => t.status === 'Validation & Testing').length
+        const todo              = assigneeTasks.filter((t) => t.status === 'Todo').length
         const totalSP = assigneeTasks.reduce((s, t) => s + (t.storyPoints || 0), 0)
         const doneSP  = assigneeTasks.filter(t => t.status === 'Done').reduce((s, t) => s + (t.storyPoints || 0), 0)
 
         const summaryParts: string[] = []
         if (done > 0) summaryParts.push(`${done} done`)
         if (inProgress > 0) summaryParts.push(`${inProgress} in progress`)
+        if (validationTesting > 0) summaryParts.push(`${validationTesting} in validation`)
         if (todo > 0) summaryParts.push(`${todo} todo`)
 
         return (

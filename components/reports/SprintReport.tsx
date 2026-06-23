@@ -15,6 +15,10 @@ function StatusBadge({ status }: { status: string }) {
       ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
       : status === 'In Progress'
       ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400'
+      : status === 'Validation & Testing'
+      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400'
+      : status === 'On Hold'
+      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400'
       : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cls}`}>{status}</span>

@@ -12,11 +12,12 @@ interface KanbanBoardProps {
   onEditTask: (id: string) => void
 }
 
-const COLUMNS: { status: TaskStatus; label: string; accent: string; allowedSources?: TaskStatus[] }[] = [
-  { status: 'Todo',        label: 'Todo',        accent: 'border-gray-300' },
-  { status: 'In Progress', label: 'In Progress', accent: 'border-blue-400' },
-  { status: 'On Hold',     label: 'On Hold',     accent: 'border-amber-400', allowedSources: ['In Progress'] },
-  { status: 'Done',        label: 'Done',        accent: 'border-green-400' },
+const COLUMNS: { status: TaskStatus; label: string; accent: string; allowedSources?: TaskStatus[]; rejectionMessage?: string }[] = [
+  { status: 'Todo',                 label: 'Todo',                 accent: 'border-gray-300' },
+  { status: 'In Progress',          label: 'In Progress',          accent: 'border-blue-400' },
+  { status: 'Validation & Testing', label: 'Validation & Testing', accent: 'border-purple-400', allowedSources: ['In Progress'], rejectionMessage: 'Only In Progress cards can move to Validation & Testing' },
+  { status: 'On Hold',              label: 'On Hold',              accent: 'border-amber-400', allowedSources: ['In Progress', 'Validation & Testing'], rejectionMessage: 'Only In Progress or Validation & Testing cards can be put On Hold' },
+  { status: 'Done',                 label: 'Done',                 accent: 'border-green-400' },
 ]
 
 export function KanbanBoard({ tasks, onStatusChange, onEditTask }: KanbanBoardProps) {
@@ -40,7 +41,7 @@ export function KanbanBoard({ tasks, onStatusChange, onEditTask }: KanbanBoardPr
   return (
     <>
       <div className="flex gap-4 overflow-x-auto pb-4">
-        {COLUMNS.map(({ status, label, accent, allowedSources }) => (
+        {COLUMNS.map(({ status, label, accent, allowedSources, rejectionMessage }) => (
           <KanbanColumn
             key={status}
             status={status}
@@ -48,6 +49,7 @@ export function KanbanBoard({ tasks, onStatusChange, onEditTask }: KanbanBoardPr
             tasks={grouped[status]}
             accentClass={accent}
             allowedSources={allowedSources}
+            rejectionMessage={rejectionMessage}
             onStatusChange={handleColumnDrop}
             onEditTask={onEditTask}
           />

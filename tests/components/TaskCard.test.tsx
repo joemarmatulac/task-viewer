@@ -18,7 +18,7 @@ describe('BlockerBadge', () => {
   })
 })
 
-const BLANK_DATES = { actualStartDate: '', actualEndDate: '', onHoldDate: '', onHoldReason: '' }
+const BLANK_DATES = { actualStartDate: '', actualEndDate: '', onHoldDate: '', onHoldEndDate: '', onHoldReason: '' }
 
 const baseTask: EnrichedTask = {
   ...BLANK_DATES,

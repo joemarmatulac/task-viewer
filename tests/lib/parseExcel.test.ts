@@ -55,6 +55,7 @@ describe('parseRows', () => {
       actualStartDate: '',
       actualEndDate: '',
       onHoldDate: '',
+      onHoldEndDate: '',
       onHoldReason: '',
       blockedBy: [],
       dependsOn: [],

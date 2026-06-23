@@ -3,7 +3,7 @@ import type { Task, TaskStatus } from '@/types/task'
 
 type RawRow = Record<string, string | number | undefined>
 
-const VALID_STATUSES: TaskStatus[] = ['Todo', 'In Progress', 'On Hold', 'Done']
+const VALID_STATUSES: TaskStatus[] = ['Todo', 'In Progress', 'Validation & Testing', 'On Hold', 'Done']
 
 export interface ParseResult {
   tasks: Task[]
@@ -101,6 +101,7 @@ export function parseRows(rows: RawRow[]): ParseResult {
       actualStartDate: parseDate(row['Actual Start Date']),
       actualEndDate:   parseDate(row['Actual End Date']),
       onHoldDate:      parseDate(row['On Hold Date']),
+      onHoldEndDate:   parseDate(row['On Hold End Date']),
       onHoldReason:    toStr(row['On Hold Reason']),
       blockedBy,
       dependsOn,

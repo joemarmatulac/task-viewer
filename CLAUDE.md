@@ -36,6 +36,7 @@ First sheet (or whichever sheet the user picks), row 1 must contain these header
 | Actual Start Date | no |
 | Actual End Date | no |
 | On Hold Date | no |
+| On Hold End Date | no |
 | On Hold Reason | no |
 | Blocked By | no |
 | Dependency | no |
@@ -43,7 +44,7 @@ First sheet (or whichever sheet the user picks), row 1 must contain these header
 
 Rows missing any **required** field are skipped and surfaced as amber warnings.
 
-Valid `Status` values: `Todo`, `In Progress`, `On Hold`, `Done`. Anything else defaults to `Todo`.
+Valid `Status` values: `Todo`, `In Progress`, `Validation & Testing`, `On Hold`, `Done`. Anything else defaults to `Todo`.
 
 `Blocked By` and `Dependency` accept comma-separated Task IDs (e.g. `T1,T3`).
 

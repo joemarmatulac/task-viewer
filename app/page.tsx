@@ -6,7 +6,7 @@ import { ReportsTabs } from '@/components/ReportsTabs'
 import { TaskEditModal } from '@/components/TaskEditModal'
 import { parseExcelFile, getSheetNames } from '@/lib/parseExcel'
 import { exportTasksToExcel } from '@/lib/exportExcel'
-import { resolveBlockers } from '@/lib/taskUtils'
+import { resolveBlockers, applyStatusTransition } from '@/lib/taskUtils'
 import type { EnrichedTask, TaskStatus } from '@/types/task'
 
 const REQUIRED_COLUMNS = ['Task ID', 'Task Name', 'Project', 'Task Description', 'Assignee', 'Story Points', 'Status', 'Target Start Date', 'Target End Date', 'Actual Start Date', 'Actual End Date', 'On Hold Date', 'On Hold Reason', 'Blocked By', 'Dependency', 'Notes']
@@ -30,14 +30,7 @@ export default function Page() {
     const today = new Date().toISOString().split('T')[0]
     setTasks(prev => prev.map(t => {
       if (t.id !== id) return t
-      const updates: Partial<typeof t> = { status }
-      if (status === 'In Progress' && !t.actualStartDate) updates.actualStartDate = today
-      if (status === 'Done' && !t.actualEndDate) updates.actualEndDate = today
-      if (status === 'On Hold') {
-        updates.onHoldDate = today
-        updates.onHoldReason = meta?.onHoldReason ?? ''
-      }
-      return { ...t, ...updates }
+      return { ...t, ...applyStatusTransition(t, status, today, meta) }
     }))
   }
 
@@ -245,10 +238,11 @@ export default function Page() {
               <li>
                 <span className="font-medium text-gray-800 dark:text-gray-200">Manage tasks on the Kanban board</span>
                 <p className="mt-1 ml-5 text-gray-500 dark:text-gray-400">
-                  Tasks are grouped into <strong>Todo</strong>, <strong>In Progress</strong>, <strong>On Hold</strong>, and <strong>Done</strong> columns.
+                  Tasks are grouped into <strong>Todo</strong>, <strong>In Progress</strong>, <strong>Validation &amp; Testing</strong>, <strong>On Hold</strong>, and <strong>Done</strong> columns.
                   Drag any card to a different column to update its status. Moving a card to <strong>In Progress</strong> automatically
                   records today as the <strong>Actual Start Date</strong>; moving to <strong>Done</strong> records the <strong>Actual End Date</strong>.
-                  Only <strong>In Progress</strong> cards can be moved to <strong>On Hold</strong> — a reason prompt will appear.
+                  Only <strong>In Progress</strong> cards can be moved to <strong>Validation &amp; Testing</strong>.
+                  Only <strong>In Progress</strong> or <strong>Validation &amp; Testing</strong> cards can be moved to <strong>On Hold</strong> — a reason prompt will appear.
                   Hover over any card and click <strong>Edit</strong> to update blockers and dependency relationships.
                   Use the filter bar to narrow by assignee, status, or target date range.
                 </p>
@@ -287,7 +281,7 @@ export default function Page() {
             <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
               <p className="text-xs text-gray-400 dark:text-gray-500">
                 <strong className="text-gray-500 dark:text-gray-400">Valid Status values:</strong>{' '}
-                {['Todo', 'In Progress', 'On Hold', 'Done'].map(s => (
+                {['Todo', 'In Progress', 'Validation & Testing', 'On Hold', 'Done'].map(s => (
                   <code key={s} className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-xs mr-1">{s}</code>
                 ))}
                 — any other value defaults to <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-xs">Todo</code>.

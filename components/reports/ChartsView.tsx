@@ -10,19 +10,21 @@ import type { EnrichedTask } from '@/types/task'
 
 // ─── colours ─────────────────────────────────────────────────────────────────
 const C = {
-  todo:       '#9CA3AF',
-  inProgress: '#60A5FA',
-  onHold:     '#F59E0B',
-  done:       '#4ADE80',
-  ideal:      '#C084FC',
-  remaining:  '#F87171',
+  todo:              '#9CA3AF',
+  inProgress:        '#60A5FA',
+  validationTesting: '#A78BFA',
+  onHold:            '#F59E0B',
+  done:              '#4ADE80',
+  ideal:             '#C084FC',
+  remaining:         '#F87171',
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  Todo:         C.todo,
-  'In Progress': C.inProgress,
-  'On Hold':    C.onHold,
-  Done:         C.done,
+  Todo:                  C.todo,
+  'In Progress':         C.inProgress,
+  'Validation & Testing': C.validationTesting,
+  'On Hold':             C.onHold,
+  Done:                  C.done,
 }
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -89,10 +91,11 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
 export function ChartsView({ tasks }: { tasks: EnrichedTask[] }) {
   const data = useMemo(() => {
     const today = new Date().toISOString().split('T')[0]
-    const done       = tasks.filter(t => t.status === 'Done')
-    const inProgress = tasks.filter(t => t.status === 'In Progress')
-    const onHold     = tasks.filter(t => t.status === 'On Hold')
-    const todo       = tasks.filter(t => t.status === 'Todo')
+    const done              = tasks.filter(t => t.status === 'Done')
+    const inProgress        = tasks.filter(t => t.status === 'In Progress')
+    const validationTesting = tasks.filter(t => t.status === 'Validation & Testing')
+    const onHold            = tasks.filter(t => t.status === 'On Hold')
+    const todo              = tasks.filter(t => t.status === 'Todo')
 
     // KPI
     const cycleTimes = done.filter(t => t.actualStartDate && t.actualEndDate)
@@ -111,18 +114,19 @@ export function ChartsView({ tasks }: { tasks: EnrichedTask[] }) {
 
     // Pie
     const pie = [
-      { name: 'Todo',        value: todo.length },
-      { name: 'In Progress', value: inProgress.length },
-      { name: 'On Hold',     value: onHold.length },
-      { name: 'Done',        value: done.length },
+      { name: 'Todo',                  value: todo.length },
+      { name: 'In Progress',           value: inProgress.length },
+      { name: 'Validation & Testing',  value: validationTesting.length },
+      { name: 'On Hold',               value: onHold.length },
+      { name: 'Done',                  value: done.length },
     ].filter(d => d.value > 0)
 
     // Stacked workload by assignee (task count + SP)
-    type Counts = { Todo: number; 'In Progress': number; 'On Hold': number; Done: number; sp: number }
+    type Counts = { Todo: number; 'In Progress': number; 'Validation & Testing': number; 'On Hold': number; Done: number; sp: number }
     const aMap = new Map<string, Counts>()
     for (const t of tasks) {
       const a = t.assignee || 'Unassigned'
-      if (!aMap.has(a)) aMap.set(a, { Todo: 0, 'In Progress': 0, 'On Hold': 0, Done: 0, sp: 0 })
+      if (!aMap.has(a)) aMap.set(a, { Todo: 0, 'In Progress': 0, 'Validation & Testing': 0, 'On Hold': 0, Done: 0, sp: 0 })
       const c = aMap.get(a)!
       c[t.status as keyof Omit<Counts, 'sp'>] = (c[t.status as keyof Omit<Counts, 'sp'>] ?? 0) + 1
       c.sp += t.storyPoints || 0
@@ -132,11 +136,11 @@ export function ChartsView({ tasks }: { tasks: EnrichedTask[] }) {
       .sort((a, b) => b.Done - a.Done)
 
     // SP workload by assignee
-    type SpCounts = { 'SP Done': number; 'SP In Progress': number; 'SP On Hold': number; 'SP Todo': number }
+    type SpCounts = { 'SP Done': number; 'SP In Progress': number; 'SP Validation & Testing': number; 'SP On Hold': number; 'SP Todo': number }
     const spMap = new Map<string, SpCounts>()
     for (const t of tasks) {
       const a = t.assignee || 'Unassigned'
-      if (!spMap.has(a)) spMap.set(a, { 'SP Done': 0, 'SP In Progress': 0, 'SP On Hold': 0, 'SP Todo': 0 })
+      if (!spMap.has(a)) spMap.set(a, { 'SP Done': 0, 'SP In Progress': 0, 'SP Validation & Testing': 0, 'SP On Hold': 0, 'SP Todo': 0 })
       const c = spMap.get(a)!
       const key = `SP ${t.status}` as keyof SpCounts
       c[key] = (c[key] ?? 0) + (t.storyPoints || 0)
@@ -225,7 +229,7 @@ export function ChartsView({ tasks }: { tasks: EnrichedTask[] }) {
       .sort((a, b) => b.days - a.days)
 
     return {
-      kpi: { done, inProgress, onHold, todo, avgCycle, donePercent },
+      kpi: { done, inProgress, validationTesting, onHold, todo, avgCycle, donePercent },
       sp: { hasStoryPoints, totalSP, doneSP, remainSP, spPercent },
       pie, workload, spWorkload, burndown, velocity, cycleTime, plannedVsActual, onHoldImpact,
     }
@@ -257,12 +261,13 @@ export function ChartsView({ tasks }: { tasks: EnrichedTask[] }) {
     <div className="space-y-6 min-w-0">
 
       {/* KPI cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <KpiCard label="Total Tasks"    value={tasks.length}              color="#6B7280" />
-        <KpiCard label="Completed"      value={`${kpi.donePercent}%`}     sub={`${kpi.done.length} of ${tasks.length} tasks`} color={C.done} />
-        <KpiCard label="In Progress"    value={kpi.inProgress.length}     color={C.inProgress} />
-        <KpiCard label="On Hold"        value={kpi.onHold.length}         color={C.onHold} />
-        <KpiCard label="Avg Cycle Time" value={kpi.avgCycle != null ? `${kpi.avgCycle}d` : '—'}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <KpiCard label="Total Tasks"         value={tasks.length}                          color="#6B7280" />
+        <KpiCard label="Completed"           value={`${kpi.donePercent}%`}                 sub={`${kpi.done.length} of ${tasks.length} tasks`} color={C.done} />
+        <KpiCard label="In Progress"         value={kpi.inProgress.length}                 color={C.inProgress} />
+        <KpiCard label="Validation & Testing" value={kpi.validationTesting.length}          color={C.validationTesting} />
+        <KpiCard label="On Hold"             value={kpi.onHold.length}                     color={C.onHold} />
+        <KpiCard label="Avg Cycle Time"      value={kpi.avgCycle != null ? `${kpi.avgCycle}d` : '—'}
           sub={kpi.avgCycle != null ? 'for completed tasks' : 'no completed tasks yet'} color={C.ideal} />
       </div>
 
@@ -301,10 +306,11 @@ export function ChartsView({ tasks }: { tasks: EnrichedTask[] }) {
                 <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
                 <Tooltip content={<ChartTooltip />} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="Done"        stackId="a" fill={C.done}       radius={[0,0,0,0]} />
-                <Bar dataKey="In Progress" stackId="a" fill={C.inProgress} />
-                <Bar dataKey="On Hold"     stackId="a" fill={C.onHold} />
-                <Bar dataKey="Todo"        stackId="a" fill={C.todo}       radius={[4,4,0,0]} />
+                <Bar dataKey="Done"                  stackId="a" fill={C.done}              radius={[0,0,0,0]} />
+                <Bar dataKey="In Progress"          stackId="a" fill={C.inProgress} />
+                <Bar dataKey="Validation & Testing" stackId="a" fill={C.validationTesting} />
+                <Bar dataKey="On Hold"              stackId="a" fill={C.onHold} />
+                <Bar dataKey="Todo"                 stackId="a" fill={C.todo}              radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -322,10 +328,11 @@ export function ChartsView({ tasks }: { tasks: EnrichedTask[] }) {
                 <YAxis tick={{ fontSize: 11 }} allowDecimals={false} label={{ value: 'SP', angle: -90, position: 'insideLeft', fontSize: 10 }} />
                 <Tooltip content={<ChartTooltip />} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="SP Done"        stackId="sp" fill={C.done}       radius={[0,0,0,0]} />
-                <Bar dataKey="SP In Progress" stackId="sp" fill={C.inProgress} />
-                <Bar dataKey="SP On Hold"     stackId="sp" fill={C.onHold} />
-                <Bar dataKey="SP Todo"        stackId="sp" fill={C.todo}       radius={[4,4,0,0]} />
+                <Bar dataKey="SP Done"                  stackId="sp" fill={C.done}              radius={[0,0,0,0]} />
+                <Bar dataKey="SP In Progress"          stackId="sp" fill={C.inProgress} />
+                <Bar dataKey="SP Validation & Testing" stackId="sp" fill={C.validationTesting} />
+                <Bar dataKey="SP On Hold"              stackId="sp" fill={C.onHold} />
+                <Bar dataKey="SP Todo"                 stackId="sp" fill={C.todo}              radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

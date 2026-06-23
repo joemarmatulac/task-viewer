@@ -11,11 +11,12 @@ interface KanbanColumnProps {
   accentClass: string
   /** If provided, only cards whose current status is in this list can be dropped here. */
   allowedSources?: TaskStatus[]
+  rejectionMessage?: string
   onStatusChange: (id: string, status: TaskStatus, sourceStatus: TaskStatus) => void
   onEditTask: (id: string) => void
 }
 
-export function KanbanColumn({ title, status, tasks, accentClass, allowedSources, onStatusChange, onEditTask }: KanbanColumnProps) {
+export function KanbanColumn({ title, status, tasks, accentClass, allowedSources, rejectionMessage, onStatusChange, onEditTask }: KanbanColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false)
   const [isRejected, setIsRejected] = useState(false)
 
@@ -69,7 +70,7 @@ export function KanbanColumn({ title, status, tasks, accentClass, allowedSources
           <p className={`text-xs text-center py-6 ${
             isRejected ? 'text-red-400' : isDragOver ? 'text-blue-400' : 'text-gray-400 dark:text-gray-600'
           }`}>
-            {isRejected ? 'Only In Progress cards can be put On Hold' : isDragOver ? 'Drop here' : 'No tasks'}
+            {isRejected ? (rejectionMessage ?? 'Cannot drop here') : isDragOver ? 'Drop here' : 'No tasks'}
           </p>
         )}
       </div>

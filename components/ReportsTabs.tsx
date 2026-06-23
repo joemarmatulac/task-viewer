@@ -94,6 +94,7 @@ export function ReportsTabs({ tasks, onStatusChange, onEditTask }: ReportsTabsPr
             <option value="All">All</option>
             <option value="Todo">Todo</option>
             <option value="In Progress">In Progress</option>
+            <option value="Validation & Testing">Validation &amp; Testing</option>
             <option value="On Hold">On Hold</option>
             <option value="Done">Done</option>
           </select>

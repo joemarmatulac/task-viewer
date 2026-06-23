@@ -48,10 +48,16 @@ export function TaskCard({ task, onEditTask }: TaskCardProps) {
         </p>
       )}
 
-      {task.onHoldDate && (
+      {task.onHoldDate && task.status === 'On Hold' && (
         <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 rounded px-2 py-1">
           <span className="font-medium">On Hold</span> since {task.onHoldDate}
           {task.onHoldReason && <span className="text-amber-500 dark:text-amber-500"> · {task.onHoldReason}</span>}
+        </div>
+      )}
+
+      {task.onHoldDate && task.onHoldEndDate && task.status !== 'On Hold' && (
+        <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded px-2 py-1">
+          Was on Hold from {task.onHoldDate} to {task.onHoldEndDate}
         </div>
       )}
 

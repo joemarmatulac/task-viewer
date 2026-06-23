@@ -37,7 +37,7 @@ export function HowToUse() {
                     ['Task ID', 'Yes', 'T1', 'Unique identifier — used for dependencies'],
                     ['Task Name', 'Yes', 'Build login page', 'Short description of the task'],
                     ['Assignee', 'No', 'Alice', 'Person responsible'],
-                    ['Status', 'No', 'In Progress', 'Todo · In Progress · Done (defaults to Todo)'],
+                    ['Status', 'No', 'In Progress', 'Todo · In Progress · Validation & Testing · On Hold · Done (defaults to Todo)'],
                     ['Target Start Date', 'No', '2026-06-01', 'YYYY-MM-DD or Excel date cell'],
                     ['Target End Date', 'No', '2026-06-15', 'YYYY-MM-DD or Excel date cell'],
                     ['Blocked By', 'No', 'T1,T3', 'Comma-separated Task IDs this task depends on'],
@@ -68,7 +68,7 @@ export function HowToUse() {
             <h3 className="font-semibold text-gray-800 dark:text-gray-200">3 — Explore the views</h3>
             <div className="space-y-1.5">
               {[
-                ['Kanban', 'Tasks grouped into Todo / In Progress / Done columns. Cards show who owns it, the date range, and dependency badges.'],
+                ['Kanban', 'Tasks grouped into Todo / In Progress / Validation & Testing / On Hold / Done columns. Cards show who owns it, the date range, and dependency badges.'],
                 ['Reports → Blocked', 'Tasks that can\'t proceed yet — split into "actively blocked" (blocker still open) vs "waiting" (blocker done but task not started).'],
                 ['Reports → Workload', 'All tasks grouped by assignee with a summary count (done / in progress / todo) per person.'],
                 ['Reports → Sprint', 'Tasks bucketed as Overdue, Due this week, Upcoming, or Completed based on End Date.'],
