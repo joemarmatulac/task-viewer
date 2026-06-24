@@ -8,7 +8,7 @@ import { OnHoldModal } from './OnHoldModal'
 
 interface KanbanBoardProps {
   tasks: EnrichedTask[]
-  onStatusChange: (id: string, status: TaskStatus, meta?: { onHoldReason?: string }) => void
+  onStatusChange: (id: string, status: TaskStatus, meta?: { onHoldReason?: string }, insertBeforeId?: string | null) => void
   onEditTask: (id: string) => void
 }
 
@@ -22,20 +22,21 @@ const COLUMNS: { status: TaskStatus; label: string; accent: string; allowedSourc
 
 export function KanbanBoard({ tasks, onStatusChange, onEditTask }: KanbanBoardProps) {
   const grouped = groupByStatus(tasks)
-  const [pendingOnHold, setPendingOnHold] = useState<{ id: string; name: string } | null>(null)
+  const [pendingOnHold, setPendingOnHold] = useState<{ id: string; name: string; insertBeforeId?: string | null } | null>(null)
 
-  function handleColumnDrop(taskId: string, targetStatus: TaskStatus, sourceStatus: TaskStatus) {
+  function handleColumnDrop(taskId: string, targetStatus: TaskStatus, sourceStatus: TaskStatus, insertBeforeId?: string | null) {
     if (targetStatus === 'On Hold') {
       const task = tasks.find(t => t.id === taskId)
-      if (task) setPendingOnHold({ id: task.id, name: task.name })
+      if (task) setPendingOnHold({ id: task.id, name: task.name, insertBeforeId })
       return
     }
-    onStatusChange(taskId, targetStatus)
+    onStatusChange(taskId, targetStatus, undefined, insertBeforeId)
   }
 
   function handleOnHoldConfirm(taskId: string, reason: string) {
+    const insertBeforeId = pendingOnHold?.insertBeforeId
     setPendingOnHold(null)
-    onStatusChange(taskId, 'On Hold', { onHoldReason: reason })
+    onStatusChange(taskId, 'On Hold', { onHoldReason: reason }, insertBeforeId)
   }
 
   return (

@@ -26,12 +26,36 @@ export default function Page() {
 
   const editingTask = editingTaskId ? tasks.find(t => t.id === editingTaskId) ?? null : null
 
-  function handleStatusChange(id: string, status: TaskStatus, meta?: { onHoldReason?: string }) {
+  function handleStatusChange(id: string, status: TaskStatus, meta?: { onHoldReason?: string }, insertBeforeId?: string | null) {
     const today = new Date().toISOString().split('T')[0]
-    setTasks(prev => prev.map(t => {
-      if (t.id !== id) return t
-      return { ...t, ...applyStatusTransition(t, status, today, meta) }
-    }))
+    setTasks(prev => {
+      const updated = prev.map(t => {
+        if (t.id !== id) return t
+        return { ...t, ...applyStatusTransition(t, status, today, meta) }
+      })
+
+      if (insertBeforeId === undefined) return updated
+
+      // Reorder: splice the moved task into the correct position in the flat array
+      const movedTask = updated.find(t => t.id === id)!
+      const rest = updated.filter(t => t.id !== id)
+
+      if (insertBeforeId === null) {
+        // Append after the last task of the target status
+        let lastPos = -1
+        for (let i = 0; i < rest.length; i++) {
+          if (rest[i].status === status) lastPos = i
+        }
+        if (lastPos === -1) return [...rest, movedTask]
+        return [...rest.slice(0, lastPos + 1), movedTask, ...rest.slice(lastPos + 1)]
+      }
+
+      if (insertBeforeId === id) return updated // no-op: dropping before itself
+
+      const pos = rest.findIndex(t => t.id === insertBeforeId)
+      if (pos === -1) return [...rest, movedTask] // fallback
+      return [...rest.slice(0, pos), movedTask, ...rest.slice(pos)]
+    })
   }
 
   function handleBlockerSave(blockedBy: string[], dependsOn: string[]) {
